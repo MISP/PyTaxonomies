@@ -1,0 +1,21 @@
+language: python
+
+cache: pip
+
+python:
+    - "3.3"
+    - "3.4"
+    - "3.5"
+    - "nightly"
+
+install:
+    - pip install coveralls
+    - pip install codecov
+    - pip install .
+
+script:
+    - nosetests --with-coverage --cover-package=pytaxonomies
+
+after_success:
+    - codecov
+    - coveralls

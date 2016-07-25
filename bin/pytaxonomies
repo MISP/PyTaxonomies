@@ -1,0 +1,13 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import argparse
+from pytaxonomies import Taxonomies
+
+if __name__ == '__main__':
+    argParser = argparse.ArgumentParser(description='Use MISP taxonomies')
+    argParser.add_argument('-p', action='store_true', help='Print all taxonomies')
+    args = argParser.parse_args()
+    if args.p:
+        t = Taxonomies()
+        print(t)
