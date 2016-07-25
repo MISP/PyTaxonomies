@@ -12,6 +12,7 @@ install:
     - pip install coveralls
     - pip install codecov
     - pip install .
+    - git clone https://github.com/MISP/misp-taxonomies.git
 
 script:
     - nosetests --with-coverage --cover-package=pytaxonomies

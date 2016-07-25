@@ -106,6 +106,8 @@ class Taxonomies(collections.Mapping):
 
         if manifest_path:
             self.url = os.path.dirname(os.path.realpath(manifest_path))
+        else:
+            self.url = self.manifest['url']
         self.version = self.manifest['version']
         self.license = self.manifest['license']
         self.description = self.manifest['description']
@@ -120,7 +122,7 @@ class Taxonomies(collections.Mapping):
         return requests.get(url).json()
 
     def __make_uri(self, taxonomy_name):
-        return '{}{}/{}'.format(self.manifest['url'], taxonomy_name, self.manifest['path'])
+        return '{}/{}/{}'.format(self.url, taxonomy_name, self.manifest['path'])
 
     def __init_taxonomies(self):
         self.taxonomies = {}
