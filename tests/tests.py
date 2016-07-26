@@ -14,7 +14,7 @@ class TestPyTaxonomies(unittest.TestCase):
         print(self.taxonomies)
 
     def test_expanded_print(self):
-        for name in self.taxonomies.taxonomies_names:
+        for name in self.taxonomies.keys():
             tax = self.taxonomies.get(name)
             print(tax.print_expanded_entries())
 
