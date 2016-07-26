@@ -14,6 +14,9 @@ class Entry():
         self.expanded = expanded
         self.description = description
 
+    def __str__(self):
+        return self.value
+
 
 class Predicate(collections.Mapping):
 
@@ -28,6 +31,9 @@ class Predicate(collections.Mapping):
         for e in entries:
             self.entries[e['value']] = Entry(e['value'], e['expanded'],
                                              e.get('description'))
+
+    def __str__(self):
+        return self.predicate
 
     def __getitem__(self, entry):
         return self.entries[entry]
@@ -61,6 +67,9 @@ class Taxonomy(collections.Mapping):
                                                     entries.get(p['value']))
 
     def __str__(self):
+        return self.machinetags()
+
+    def machinetags(self):
         to_return = ''
         for p, content in self.predicates.items():
             if content:
@@ -82,7 +91,7 @@ class Taxonomy(collections.Mapping):
     def amount_entries(self):
         return sum([len(p) for p in self.predicates])
 
-    def print_expanded_entries(self):
+    def machinetags_expanded(self):
         to_return = ''
         for p, content in self.predicates.items():
             if content:
@@ -111,7 +120,6 @@ class Taxonomies(collections.Mapping):
         self.version = self.manifest['version']
         self.license = self.manifest['license']
         self.description = self.manifest['description']
-        self.taxonomies_names = [t['name'] for t in self.manifest['taxonomies']]
         self.__init_taxonomies()
 
     def __load_path(self, path):
@@ -141,7 +149,10 @@ class Taxonomies(collections.Mapping):
         return len(self.taxonomies)
 
     def __str__(self):
+        return self.all_machinetags()
+
+    def all_machinetags(self):
         to_return = ''
         for k, taxonomy in self.taxonomies.items():
-            to_return += '{}\n'.format(taxonomy.__str__())
+            to_return += '{}\n'.format(taxonomy.machinetags())
         return to_return
