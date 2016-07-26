@@ -11,8 +11,10 @@ class Entry():
 
     def __init__(self, value, expanded, description):
         self.value = value
-        self.expanded = expanded
-        self.description = description
+        self.expanded = expanded.encode('utf-8')
+        self.description = None
+        if description:
+            self.description = description.encode('utf-8')
 
     def __str__(self):
         return self.value
@@ -22,7 +24,9 @@ class Predicate(collections.Mapping):
 
     def __init__(self, predicate, description, entries):
         self.predicate = predicate
-        self.description = description
+        self.description = None
+        if description:
+            self.description = description.encode('utf-8')
         self.entries = {}
         if entries:
             self.__init_entries(entries)

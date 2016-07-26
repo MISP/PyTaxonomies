@@ -31,6 +31,14 @@ class TestPyTaxonomies(unittest.TestCase):
     def test_local(self):
         Taxonomies(manifest_path="./misp-taxonomies/MANIFEST.json")
 
+    def test_print_classes(self):
+        tax = list(self.taxonomies.values())[0]
+        print(tax)
+        pred = list(tax.values())[0]
+        print(pred)
+        entry = list(pred.values())[0]
+        print(entry)
+
 
 if __name__ == "__main__":
     unittest.main()
