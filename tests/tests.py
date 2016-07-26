@@ -16,7 +16,7 @@ class TestPyTaxonomies(unittest.TestCase):
     def test_expanded_print(self):
         for name in self.taxonomies.keys():
             tax = self.taxonomies.get(name)
-            print(tax.print_expanded_entries())
+            print(tax.machinetags_expanded())
 
     def test_len(self):
         len(self.taxonomies)
