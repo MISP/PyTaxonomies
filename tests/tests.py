@@ -9,27 +9,29 @@ class TestPyTaxonomies(unittest.TestCase):
 
     def setUp(self):
         self.taxonomies = Taxonomies()
+        self.taxonomies_offline = Taxonomies(manifest_path="./misp-taxonomies/MANIFEST.json")
 
-    def test_print(self):
-        print(self.taxonomies)
+    def test_compareOnlineOffilne(self):
+        self.assertEqual(str(self.taxonomies), str(self.taxonomies_offline))
 
-    def test_expanded_print(self):
-        for name in self.taxonomies.keys():
-            tax = self.taxonomies.get(name)
-            print(tax.machinetags_expanded())
+    def test_expanded_machinetags(self):
+        self.taxonomies.all_machinetags(expanded=True)
 
-    def test_len(self):
+    def test_machinetags(self):
+        self.taxonomies.all_machinetags()
+
+    def test_dict(self):
         len(self.taxonomies)
-
-    def test_iter(self):
         for n, t in self.taxonomies.items():
             len(t)
-            t.amount_entries()
             for p, value in t.items():
                 continue
 
-    def test_local(self):
-        Taxonomies(manifest_path="./misp-taxonomies/MANIFEST.json")
+    def test_search(self):
+        self.taxonomies.search('phish')
+
+    def test_search_expanded(self):
+        self.taxonomies.search('phish', expanded=True)
 
     def test_print_classes(self):
         tax = list(self.taxonomies.values())[0]
