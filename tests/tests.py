@@ -41,6 +41,9 @@ class TestPyTaxonomies(unittest.TestCase):
         entry = list(pred.values())[0]
         print(entry)
 
+    def test_amountEntries(self):
+        list(self.taxonomies.values())[0].amount_entries()
+
 
 if __name__ == "__main__":
     unittest.main()
