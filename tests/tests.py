@@ -3,6 +3,7 @@
 
 import unittest
 from pytaxonomies import Taxonomies
+import pytaxonomies.api
 
 
 class TestPyTaxonomies(unittest.TestCase):
@@ -43,6 +44,13 @@ class TestPyTaxonomies(unittest.TestCase):
 
     def test_amountEntries(self):
         list(self.taxonomies.values())[0].amount_entries()
+
+    def test_missingDependency(self):
+        pytaxonomies.api.HAS_REQUESTS = False
+        with self.assertRaises(Exception):
+            Taxonomies()
+        Taxonomies(manifest_path="./misp-taxonomies/MANIFEST.json")
+        pytaxonomies.api.HAS_REQUESTS = True
 
 
 if __name__ == "__main__":

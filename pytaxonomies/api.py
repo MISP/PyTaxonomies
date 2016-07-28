@@ -2,10 +2,15 @@
 # -*- coding: utf-8 -*-
 
 import json
-import requests
 import os
 import collections
 import re
+
+try:
+    import requests
+    HAS_REQUESTS = True
+except ImportError:
+    HAS_REQUESTS = False
 
 
 class Entry():
@@ -132,6 +137,8 @@ class Taxonomies(collections.Mapping):
             return json.load(f)
 
     def __load_url(self, url):
+        if not HAS_REQUESTS:
+            raise Exception("Python module 'requests' isn't installed, unable to fetch the taxonomies.")
         return requests.get(url).json()
 
     def __make_uri(self, taxonomy_name):
