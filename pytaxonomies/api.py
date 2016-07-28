@@ -5,6 +5,7 @@ import json
 import requests
 import os
 import collections
+import re
 
 
 class Entry():
@@ -71,16 +72,16 @@ class Taxonomy(collections.Mapping):
                                                     entries.get(p['value']))
 
     def __str__(self):
-        return self.machinetags()
+        return '\n'.join(self.machinetags())
 
     def machinetags(self):
-        to_return = ''
+        to_return = []
         for p, content in self.predicates.items():
             if content:
                 for k in content.keys():
-                    to_return += '{}:{}="{}"\n'.format(self.name, p, k)
+                    to_return.append('{}:{}="{}"'.format(self.name, p, k))
             else:
-                to_return += '{}:{}\n'.format(self.name, p)
+                to_return.append('{}:{}'.format(self.name, p))
         return to_return
 
     def __getitem__(self, predicate):
@@ -96,13 +97,13 @@ class Taxonomy(collections.Mapping):
         return sum([len(p) for p in self.predicates])
 
     def machinetags_expanded(self):
-        to_return = ''
+        to_return = []
         for p, content in self.predicates.items():
             if content:
                 for k, entry in content.items():
-                    to_return += '{}:{}="{}"\n'.format(self.name, p, entry.expanded)
+                    to_return.append('{}:{}="{}"'.format(self.name, p, entry.expanded.decode()))
             else:
-                to_return += '{}:{}\n'.format(self.name, p)
+                to_return.append('{}:{}'.format(self.name, p))
         return to_return
 
 
@@ -153,10 +154,29 @@ class Taxonomies(collections.Mapping):
         return len(self.taxonomies)
 
     def __str__(self):
-        return self.all_machinetags()
+        to_print = ''
+        for mt_taxonomy in self.all_machinetags():
+            for mt in mt_taxonomy:
+                to_print += '\n'.join(mt)
+            to_print += '\n'
+        return to_print
 
-    def all_machinetags(self):
-        to_return = ''
-        for k, taxonomy in self.taxonomies.items():
-            to_return += '{}\n'.format(taxonomy.machinetags())
+    def search(self, query, expanded=False):
+        query = query.lower()
+        to_return = []
+        for taxonomy in self.taxonomies.values():
+            if expanded:
+                machinetags = taxonomy.machinetags_expanded()
+            else:
+                machinetags = taxonomy.machinetags()
+            for mt in machinetags:
+                entries = [e.lower() for e in re.findall('[^:="]*', mt) if e]
+                for e in entries:
+                    if e.startswith(query) or e.endswith(query):
+                        to_return.append(mt)
         return to_return
+
+    def all_machinetags(self, expanded=False):
+        if expanded:
+            return [taxonomy.machinetags_expanded() for taxonomy in self.taxonomies.values()]
+        return [taxonomy.machinetags() for taxonomy in self.taxonomies.values()]
