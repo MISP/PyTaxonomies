@@ -162,10 +162,8 @@ class Taxonomies(collections.Mapping):
 
     def __str__(self):
         to_print = ''
-        for mt_taxonomy in self.all_machinetags():
-            for mt in mt_taxonomy:
-                to_print += '{}\n'.format(mt)
-            to_print += '\n'
+        for taxonomy in self.taxonomies.values():
+            to_print += "{}\n\n".format(str(taxonomy))
         return to_print
 
     def search(self, query, expanded=False):
