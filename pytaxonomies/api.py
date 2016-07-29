@@ -164,7 +164,7 @@ class Taxonomies(collections.Mapping):
         to_print = ''
         for mt_taxonomy in self.all_machinetags():
             for mt in mt_taxonomy:
-                to_print += '\n'.join(mt)
+                to_print += '{}\n'.format(mt)
             to_print += '\n'
         return to_print
 
