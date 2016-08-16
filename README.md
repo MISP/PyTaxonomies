@@ -8,7 +8,7 @@ Pythonic way to work with the taxonomies defined there: https://github.com/MISP/
 
 # Usage
 
-Taxonomies and predicates are represented as immurable Python dictionaries.
+Taxonomies and predicates are represented as immutable Python dictionaries.
 
 ## Basics
 
