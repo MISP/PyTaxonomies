@@ -12,6 +12,7 @@ python:
 install:
     - pip install coveralls
     - pip install codecov
+    - pip install -r website/REQUIREMENTS.txt
     - pip install .
     - git clone https://github.com/MISP/misp-taxonomies.git
 
