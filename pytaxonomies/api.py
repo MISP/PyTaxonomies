@@ -52,7 +52,7 @@ class Predicate(collections.Mapping):
         return iter(self.entries)
 
     def __len__(self):
-        return len(self.entries)
+        return len(self.entries.keys())
 
 
 class Taxonomy(collections.Mapping):
@@ -62,6 +62,7 @@ class Taxonomy(collections.Mapping):
         self.name = self.taxonomy['namespace']
         self.description = self.taxonomy['description']
         self.version = self.taxonomy['version']
+        self.expanded = self.taxonomy.get('expanded')
         self.__init_predicates()
 
     def __init_predicates(self):
@@ -76,8 +77,19 @@ class Taxonomy(collections.Mapping):
             self.predicates[p['value']] = Predicate(p['value'], p.get('expanded'),
                                                     entries.get(p['value']))
 
+    def has_entries(self):
+        if self.predicates.values() and list(self.predicates.values())[0].entries:
+            return True
+        return False
+
     def __str__(self):
         return '\n'.join(self.machinetags())
+
+    def make_machinetag(self, predicate, entry=None):
+        if entry:
+            return '{}:{}="{}"'.format(self.name, predicate, entry)
+        else:
+            return '{}:{}'.format(self.name, predicate)
 
     def machinetags(self):
         to_return = []
@@ -99,7 +111,10 @@ class Taxonomy(collections.Mapping):
         return len(self.predicates)
 
     def amount_entries(self):
-        return sum([len(p) for p in self.predicates])
+        if self.has_entries():
+            return sum([len(e) for e in self.predicates.values()])
+        else:
+            return len(self.predicates.keys())
 
     def machinetags_expanded(self):
         to_return = []
@@ -150,6 +165,8 @@ class Taxonomies(collections.Mapping):
             uri = self.__make_uri(t['name'])
             tax = self.loader(uri)
             self.taxonomies[t['name']] = Taxonomy(tax)
+            if t['name'] != self.taxonomies[t['name']].name:
+                raise Exception("The name of the taxonomy in the manifest ({}) doesn't match with the name in the taxonomy ({})".format(t['name'], self.taxonomies[t['name']].name))
 
     def __getitem__(self, name):
         return self.taxonomies[name]
@@ -180,6 +197,17 @@ class Taxonomies(collections.Mapping):
                     if e.startswith(query) or e.endswith(query):
                         to_return.append(mt)
         return to_return
+
+    def revert_machinetag(self, machinetag):
+        if '=' in machinetag:
+            name, predicat, entry = re.findall('^([^:]*):([^=]*)="([^"]*)"$', machinetag)[0]
+        else:
+            name, predicat = re.findall('^([^:]*):([^=]*)$', machinetag)[0]
+            entry = None
+        if entry:
+            return self.taxonomies[name], self.taxonomies[name][predicat], self.taxonomies[name][predicat][entry]
+        else:
+            return self.taxonomies[name], self.taxonomies[name][predicat]
 
     def all_machinetags(self, expanded=False):
         if expanded:
