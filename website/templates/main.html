@@ -1,0 +1,24 @@
+{% extends "bootstrap/base.html" %}
+
+{% block scripts %}
+    {{ super() }}
+    <script src='{{ url_for('static', filename='jquery.dataTables.min.js') }}'></script>
+    <script src='{{ url_for('static', filename='dataTables.bootstrap.min.js') }}'></script>
+    <script>
+    $(document).ready(function() {
+        var table = $('#pytaxonomies_table').DataTable({
+            "pageLength": 25,
+            "lengthMenu": [[25, 25, 100, -1], [25, 50, 100, "All"]]
+        });
+    } );
+    </script>
+{% endblock %}
+
+{% block head %}
+    {{ super() }}
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='dataTables.bootstrap.min.css') }}">
+{% endblock %}
+
+{% block navbar %}
+  {{nav.mynavbar.render()}}
+{% endblock %}

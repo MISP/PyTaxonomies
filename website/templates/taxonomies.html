@@ -1,0 +1,39 @@
+{% extends "main.html" %}
+{% block title %}Taxonomies{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Taxonomies - version {{ all_taxonomies.version  }}</h1>
+  <table class="table table-striped table-bordered" id="pytaxonomies_table">
+      <thead>
+          <tr>
+              <th>Short name</th>
+              <th>Long name</th>
+              <th>Version</th>
+              <th>Entries</th>
+              <th>Description</th>
+          </tr>
+      </thead>
+      <tfoot>
+          <tr>
+              <th>Short name</th>
+              <th>Long name</th>
+              <th>Version</th>
+              <th>Entries</th>
+              <th>Description</th>
+          </tr>
+      </tfoot>
+      <tbody>
+	    {% for a, t in all_taxonomies.items() %}
+        <tr>
+            <td><a href="{{ url_for('taxonomies', name=t.name) }}">{{ t.name }}</a></td>
+            <td>{% if t.expanded %} {{ t.expanded }} {%endif%}</td>
+            <td>{{ t.version }}</td>
+            <td>{{ t.amount_entries() }}</td>
+            <td>{{ t.description }}</td>
+	    {% endfor %}
+      </tbody>
+  </table>
+</div>
+{% endblock %}
+

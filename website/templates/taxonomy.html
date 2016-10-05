@@ -1,0 +1,68 @@
+{% extends "main.html" %}
+{% block title %}Taxonomy - {{ taxonomy.name }} {% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>{% if taxonomy.expanded %}{{ taxonomy.expanded }} {%else%} {{taxonomy.name}} {%endif%} (Version {{ taxonomy.version }})</h1>
+    <h3>{{ taxonomy.description }}</h3>
+  <table class="table table-striped table-bordered" id="pytaxonomies_table">
+      <thead>
+          <tr>
+              <th>Description</th>
+              <th>Predicate</th>
+              {% if taxonomy.has_entries() %}
+                <th>Values</th>
+              {% else %}
+                <th>Machinetag</th>
+              {% endif %}
+          </tr>
+      </thead>
+      <tfoot>
+          <tr>
+              <th>Description</th>
+              <th>Predicate</th>
+              {% if taxonomy.has_entries() %}
+                <th>Values</th>
+              {% else %}
+                <th>Machinetag</th>
+              {% endif %}
+          </tr>
+      </tfoot>
+      <tbody>
+	    {% for p in taxonomy.predicates.values() %}
+        <tr>
+            <td>{% if p.description %}{{ p.description.decode() }}{% endif %}</td>
+            <td>{{ p.predicate }}</td>
+            {% if p.entries %}
+                <td>
+                <table class="table table-striped table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Value</th>
+                            <th>Expanded</th>
+                            <th>Description</th>
+                            <th>Machinetag</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for e in p.entries.values() %}
+                    <tr>
+                        <td>{{ e.value }}</td>
+                        <td>{% if e.expanded %}{{ e.expanded.decode() }}{% endif %}</td>
+                        <td>{% if e.description %}{{ e.description.decode() }}{% endif %}</td>
+                        <td>{{ taxonomy.make_machinetag(p, e) }}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                </td>
+            {% else %}
+            <td>{{ taxonomy.make_machinetag(p) }}</td>
+            {% endif %}
+        </tr>
+	    {% endfor %}
+      </tbody>
+  </table>
+</div>
+{% endblock %}
+
