@@ -52,6 +52,11 @@ class TestPyTaxonomies(unittest.TestCase):
         Taxonomies(manifest_path="./misp-taxonomies/MANIFEST.json")
         pytaxonomies.api.HAS_REQUESTS = True
 
+    def test_machinetags(self):
+        tax = list(self.taxonomies.values())[0]
+        for p in tax.values():
+            mt = tax.make_machinetag(p)
+            self.taxonomies.revert_machinetag(mt)
 
 if __name__ == "__main__":
     unittest.main()
