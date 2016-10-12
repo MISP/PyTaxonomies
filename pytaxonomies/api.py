@@ -15,12 +15,13 @@ except ImportError:
 
 class Entry():
 
-    def __init__(self, value, expanded, description):
+    def __init__(self, value, expanded, colour, description):
         self.value = value
-        self.expanded = expanded.encode('utf-8')
+        self.expanded = expanded
+        self.colour = colour
         self.description = None
         if description:
-            self.description = description.encode('utf-8')
+            self.description = description
 
     def __str__(self):
         return self.value
@@ -28,11 +29,12 @@ class Entry():
 
 class Predicate(collections.Mapping):
 
-    def __init__(self, predicate, description, entries):
+    def __init__(self, predicate, description, colour, entries):
         self.predicate = predicate
         self.description = None
+        self.colour = colour
         if description:
-            self.description = description.encode('utf-8')
+            self.description = description
         self.entries = {}
         if entries:
             self.__init_entries(entries)
@@ -40,7 +42,7 @@ class Predicate(collections.Mapping):
     def __init_entries(self, entries):
         for e in entries:
             self.entries[e['value']] = Entry(e['value'], e['expanded'],
-                                             e.get('description'))
+                                             e.get('colour'), e.get('description'))
 
     def __str__(self):
         return self.predicate
@@ -63,6 +65,7 @@ class Taxonomy(collections.Mapping):
         self.description = self.taxonomy['description']
         self.version = self.taxonomy['version']
         self.expanded = self.taxonomy.get('expanded')
+        self.refs = self.taxonomy.get('refs')
         self.__init_predicates()
 
     def __init_predicates(self):
@@ -75,7 +78,7 @@ class Taxonomy(collections.Mapping):
                 entries[v['predicate']] += v['entry']
         for p in self.taxonomy['predicates']:
             self.predicates[p['value']] = Predicate(p['value'], p.get('expanded'),
-                                                    entries.get(p['value']))
+                                                    p.get('colour'), entries.get(p['value']))
 
     def has_entries(self):
         if self.predicates.values() and list(self.predicates.values())[0].entries:

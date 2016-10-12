@@ -14,9 +14,14 @@
     </script>
 {% endblock %}
 
-{% block head %}
+{% block styles %}
     {{ super() }}
     <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='dataTables.bootstrap.min.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static',filename='pytaxonomies.css') }}">
+{% endblock %}
+
+{% block head %}
+    {{ super() }}
 {% endblock %}
 
 {% block navbar %}

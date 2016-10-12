@@ -10,6 +10,7 @@ from pytaxonomies import Taxonomies
 
 nav = Nav()
 
+
 @nav.navigation()
 def mynavbar():
     return Navbar(
@@ -30,6 +31,7 @@ t = Taxonomies()
 @app.route('/', methods=['GET'])
 def index():
     return taxonomies()
+
 
 @app.route('/taxonomies/', defaults={'name': None})
 @app.route('/taxonomies/<name>', methods=['GET'])
@@ -52,9 +54,5 @@ def search():
     return render_template('search.html', query=None, entries=None)
 
 
-
 def main():
     app.run()
-
-if __name__ == '__main__':
-    main()
