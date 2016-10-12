@@ -124,7 +124,7 @@ class Taxonomy(collections.Mapping):
         for p, content in self.predicates.items():
             if content:
                 for k, entry in content.items():
-                    to_return.append('{}:{}="{}"'.format(self.name, p, entry.expanded.decode()))
+                    to_return.append('{}:{}="{}"'.format(self.name, p, entry.expanded))
             else:
                 to_return.append('{}:{}'.format(self.name, p))
         return to_return
