@@ -5,11 +5,10 @@
 <div class="container">
     <h1>Search {% if query %} - {{query}} {%endif%}</h1>
 
-    <form class="form-inline" role="form" action="search" method=post>
-        <div class="form-group">
-            <input type="text" class="form-control" name="query" id=query placeholder="Search a thing ">
-        </div>
-        <button type="submit" class="btn btn-default">Search</button>
+    <form class="form-inline" action="search" method=post>
+        {{ form.csrf_token }}
+        {{ form.query(size=20) }}
+        <input type="submit" value="Search">
     </form>
     </br>
     <div>
@@ -39,12 +38,12 @@
                 <td>
                     {% if val|length == 3 %}
                         {% if val[2].description %}
-                            {{ val[2].description.decode() }}
+                            {{ val[2].description }}
                         {% elif val[2].expanded %}
-                            {{ val[2].expanded.decode() }}
+                            {{ val[2].expanded }}
                         {%endif%}
                     {% elif val[1].description %}
-                        {{ val[1].description.decode() }}
+                        {{ val[1].description }}
                     {% else %}
                         {{ val[1].predicate }}
                     {%endif%}

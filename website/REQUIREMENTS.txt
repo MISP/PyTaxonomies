@@ -1,3 +1,4 @@
 flask
 flask_bootstrap
 flask_nav
+flask_wtf

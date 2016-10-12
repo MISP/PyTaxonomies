@@ -5,6 +5,9 @@ from flask import Flask, request, render_template
 from flask_bootstrap import Bootstrap
 from flask_nav import Nav
 from flask_nav.elements import Navbar, View
+from flask_wtf import FlaskForm
+from wtforms import StringField
+from wtforms.validators import DataRequired
 from pytaxonomies import Taxonomies
 
 
@@ -20,6 +23,7 @@ def mynavbar():
     )
 
 app = Flask(__name__)
+app.secret_key = '<changeme>'
 Bootstrap(app)
 app.config['BOOTSTRAP_SERVE_LOCAL'] = True
 app.debug = True
@@ -27,6 +31,11 @@ nav.init_app(app)
 
 #t = Taxonomies(manifest_path="../../misp-taxonomies/MANIFEST.json")
 t = Taxonomies()
+
+
+class SearchForm(FlaskForm):
+    query = StringField('Query', validators=[DataRequired()])
+
 
 @app.route('/', methods=['GET'])
 def index():
@@ -43,15 +52,16 @@ def taxonomies(name=None):
 
 @app.route('/search', methods=['GET', 'POST'])
 def search():
-    if request.form.get('query'):
+    form = SearchForm()
+    if form.validate_on_submit():
         q = request.form.get('query')
         entries = t.search(q)
         if entries:
             to_display = {e: t.revert_machinetag(e) for e in entries}
-            return render_template('search.html', query=q, entries=to_display)
+            return render_template('search.html', form=form, entries=to_display)
         else:
-            return render_template('search.html', query=q, entries=None)
-    return render_template('search.html', query=None, entries=None)
+            return render_template('search.html', form=form, entries=None)
+    return render_template('search.html', form=form, entries=None)
 
 
 def main():
