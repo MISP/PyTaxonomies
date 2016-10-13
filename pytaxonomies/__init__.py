@@ -1,1 +1,1 @@
-from .api import Taxonomies
+from .api import Taxonomies, EncodeTaxonomies

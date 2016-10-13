@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import json
 import unittest
-from pytaxonomies import Taxonomies
+from pytaxonomies import Taxonomies, EncodeTaxonomies
 import pytaxonomies.api
 
 
@@ -35,12 +36,13 @@ class TestPyTaxonomies(unittest.TestCase):
         self.taxonomies.search('phish', expanded=True)
 
     def test_print_classes(self):
-        tax = list(self.taxonomies.values())[0]
-        print(tax)
-        pred = list(tax.values())[0]
-        print(pred)
-        entry = list(pred.values())[0]
-        print(entry)
+        for t in self.taxonomies.values():
+            if not t.has_entries():
+                continue
+            tax = list(t.values())[0]
+            print(tax)
+            pred = list(tax.values())[0]
+            print(pred)
 
     def test_amountEntries(self):
         list(self.taxonomies.values())[0].amount_entries()
@@ -57,6 +59,11 @@ class TestPyTaxonomies(unittest.TestCase):
         for p in tax.values():
             mt = tax.make_machinetag(p)
             self.taxonomies.revert_machinetag(mt)
+
+    def test_json(self):
+        for t in self.taxonomies:
+            json.dumps(t, cls=EncodeTaxonomies)
+
 
 if __name__ == "__main__":
     unittest.main()

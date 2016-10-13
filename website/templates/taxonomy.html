@@ -19,6 +19,7 @@
       <thead>
           <tr>
               <th>Description</th>
+              <th>Expanded</th>
               <th>Predicate</th>
               {% if taxonomy.has_entries() %}
                 <th>Values</th>
@@ -31,6 +32,7 @@
       <tfoot>
           <tr>
               <th>Description</th>
+              <th>Expanded</th>
               <th>Predicate</th>
               {% if taxonomy.has_entries() %}
                 <th>Values</th>
@@ -44,6 +46,7 @@
 	    {% for p in taxonomy.predicates.values() %}
         <tr>
             <td>{% if p.description %}{{ p.description }}{% endif %}</td>
+            <td>{% if p.expanded %}{{ p.expanded }}{% endif %}</td>
             <td>{{ p.predicate }}</td>
             {% if p.entries %}
                 <td>
@@ -51,6 +54,7 @@
                     <thead>
                         <tr>
                             <th>Value</th>
+                            <th>Numerical Value</th>
                             <th>Expanded</th>
                             <th>Description</th>
                             <th>Colour</th>
@@ -61,6 +65,7 @@
                     {% for e in p.entries.values() %}
                     <tr>
                         <td>{{ e.value }}</td>
+                        <td>{% if e.numerical_value %}{{ e.numerical_value }}{% endif %}</td>
                         <td>{% if e.expanded %}{{ e.expanded }}{% endif %}</td>
                         <td>{% if e.description %}{{ e.description }}{% endif %}</td>
                         <td>{% if p.colour %}<div class='colorbox' background={{ p.colour }}></div>{% endif %}</td>

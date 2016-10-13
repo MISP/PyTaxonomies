@@ -6,7 +6,7 @@ from flask_bootstrap import Bootstrap
 from flask_nav import Nav
 from flask_nav.elements import Navbar, View
 from flask_wtf import FlaskForm
-from wtforms import StringField
+from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
 from pytaxonomies import Taxonomies
 
@@ -35,6 +35,7 @@ t = Taxonomies()
 
 class SearchForm(FlaskForm):
     query = StringField('Query', validators=[DataRequired()])
+    submit = SubmitField('Search')
 
 
 @app.route('/', methods=['GET'])

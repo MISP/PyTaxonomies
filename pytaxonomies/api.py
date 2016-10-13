@@ -5,6 +5,7 @@ import json
 import os
 import collections
 import re
+from json import JSONEncoder
 
 try:
     import requests
@@ -13,15 +14,22 @@ except ImportError:
     HAS_REQUESTS = False
 
 
+class EncodeTaxonomies(JSONEncoder):
+    def default(self, obj):
+        try:
+            return obj._json()
+        except AttributeError:
+            return JSONEncoder.default(self, obj)
+
+
 class Entry():
 
-    def __init__(self, value, expanded, colour, description):
+    def __init__(self, value, expanded, colour, description, numerical_value):
         self.value = value
         self.expanded = expanded
         self.colour = colour
-        self.description = None
-        if description:
-            self.description = description
+        self.description = description
+        self.numerical_value = numerical_value
 
     def __str__(self):
         return self.value
@@ -29,20 +37,19 @@ class Entry():
 
 class Predicate(collections.Mapping):
 
-    def __init__(self, predicate, description, colour, entries):
+    def __init__(self, predicate, expanded, description, colour, entries):
         self.predicate = predicate
-        self.description = None
+        self.expanded = expanded
+        self.description = description
         self.colour = colour
-        if description:
-            self.description = description
-        self.entries = {}
-        if entries:
-            self.__init_entries(entries)
+        self.__init_entries(entries)
 
     def __init_entries(self, entries):
-        for e in entries:
-            self.entries[e['value']] = Entry(e['value'], e['expanded'],
-                                             e.get('colour'), e.get('description'))
+        self.entries = {}
+        if entries:
+            for e in entries:
+                self.entries[e['value']] = Entry(e['value'], e['expanded'], e.get('colour'),
+                                                 e.get('description'), e.get('numerical_value'))
 
     def __str__(self):
         return self.predicate
@@ -77,8 +84,51 @@ class Taxonomy(collections.Mapping):
                     entries[v['predicate']] = []
                 entries[v['predicate']] += v['entry']
         for p in self.taxonomy['predicates']:
-            self.predicates[p['value']] = Predicate(p['value'], p.get('expanded'),
+            self.predicates[p['value']] = Predicate(p['value'], p.get('expanded'), p.get('description'),
                                                     p.get('colour'), entries.get(p['value']))
+
+    def _json_predicates(self):
+        predicates_to_return = []
+        values_to_return = []
+        for predicate in self.predicates.values():
+            temp_predicate = {'value': predicate.predicate}
+            if predicate.expanded:
+                temp_predicate['expanded'] = predicate.expanded
+            if predicate.description:
+                temp_predicate['description'] = predicate.description
+            if predicate.colour:
+                temp_predicate['colour'] = predicate.colour
+            predicates_to_return.append(temp_predicate)
+
+            if predicate.entries:
+                temp_entries = {'entry': [], 'predicate': predicate.predicate}
+                for entry in predicate.entries.values():
+                    temp_entry = {'value': entry.value}
+                    if entry.expanded:
+                        temp_entry['expanded'] = entry.expanded
+                    if entry.numerical_value:
+                        temp_entry['numerical_value'] = entry.numerical_value
+                    if entry.colour:
+                        temp_entry['colour'] = entry.colour
+                    if entry.description:
+                        temp_entry['description'] = entry.description
+                    temp_entries['entry'].append(temp_entry)
+                values_to_return.append(temp_entries)
+
+        return predicates_to_return, values_to_return
+
+    def _json(self):
+        to_return = {'namespace': self.name, 'description': self.description, 'version': self.version}
+        if self.expanded:
+            to_return['expanded'] = self.expanded
+        if self.refs:
+            to_return['refs'] = self.refs
+        p, v = self._json_predicates()
+        if p:
+            to_return['predicates'] = p
+        if v:
+            to_return['values'] = v
+        return to_return
 
     def has_entries(self):
         if self.predicates.values() and list(self.predicates.values())[0].entries:
