@@ -68,10 +68,10 @@ class TestPyTaxonomies(unittest.TestCase):
         pytaxonomies.api.HAS_REQUESTS = True
 
     def test_revert_machinetags(self):
-        tax = list(self.taxonomies.values())[0]
-        for p in tax.values():
-            mt = tax.make_machinetag(p)
-            self.taxonomies.revert_machinetag(mt)
+        for tax in self.taxonomies.values():
+            for p in tax.values():
+                mt = tax.make_machinetag(p)
+                self.taxonomies.revert_machinetag(mt)
 
     def test_json(self):
         for key, t in self.taxonomies.items():
