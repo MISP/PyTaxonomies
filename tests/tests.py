@@ -5,13 +5,27 @@ import json
 import unittest
 from pytaxonomies import Taxonomies, EncodeTaxonomies
 import pytaxonomies.api
+import os
 
 
 class TestPyTaxonomies(unittest.TestCase):
 
     def setUp(self):
         self.taxonomies = Taxonomies()
-        self.taxonomies_offline = Taxonomies(manifest_path="./misp-taxonomies/MANIFEST.json")
+        self.manifest_path = "./misp-taxonomies/MANIFEST.json"
+        self.taxonomies_offline = Taxonomies(manifest_path=self.manifest_path)
+        self.json_load_taxonomies()
+
+    def __load_path(self, path):
+        with open(path, 'r') as f:
+            return json.load(f)
+
+    def json_load_taxonomies(self):
+        self.manifest = self.__load_path(self.manifest_path)
+        self.loaded_tax = {}
+        for t in self.manifest['taxonomies']:
+            path = '{}/{}/{}'.format(os.path.dirname(os.path.realpath(self.manifest_path)), t['name'], self.manifest['path'])
+            self.loaded_tax[t['name']] = self.__load_path(path)
 
     def test_compareOnlineOffilne(self):
         self.assertEqual(str(self.taxonomies), str(self.taxonomies_offline))
@@ -54,15 +68,22 @@ class TestPyTaxonomies(unittest.TestCase):
         Taxonomies(manifest_path="./misp-taxonomies/MANIFEST.json")
         pytaxonomies.api.HAS_REQUESTS = True
 
-    def test_machinetags(self):
+    def test_revert_machinetags(self):
         tax = list(self.taxonomies.values())[0]
         for p in tax.values():
             mt = tax.make_machinetag(p)
             self.taxonomies.revert_machinetag(mt)
 
     def test_json(self):
-        for t in self.taxonomies:
+        for key, t in self.taxonomies.items():
             json.dumps(t, cls=EncodeTaxonomies)
+
+    def test_recreate_dump(self):
+        self.maxDiff = None
+        for key, t in self.taxonomies.items():
+            out = t._json()
+            print(t.name)
+            self.assertCountEqual(out, self.loaded_tax[t.name])
 
 
 if __name__ == "__main__":

@@ -126,8 +126,12 @@ class Taxonomy(collections.Mapping):
         p, v = self._json_predicates()
         if p:
             to_return['predicates'] = p
+        else:
+            to_return['predicates'] = None
         if v:
             to_return['values'] = v
+        else:
+            to_return['values'] = None
         return to_return
 
     def has_entries(self):
