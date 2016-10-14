@@ -70,8 +70,13 @@ class TestPyTaxonomies(unittest.TestCase):
     def test_revert_machinetags(self):
         for tax in self.taxonomies.values():
             for p in tax.values():
-                mt = tax.make_machinetag(p)
-                self.taxonomies.revert_machinetag(mt)
+                if tax.has_entries():
+                    for e in p.values():
+                        mt = tax.make_machinetag(p, e)
+                        self.taxonomies.revert_machinetag(mt)
+                else:
+                    mt = tax.make_machinetag(p)
+                    self.taxonomies.revert_machinetag(mt)
 
     def test_json(self):
         for key, t in self.taxonomies.items():
