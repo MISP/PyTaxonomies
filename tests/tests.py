@@ -50,13 +50,12 @@ class TestPyTaxonomies(unittest.TestCase):
         self.taxonomies.search('phish', expanded=True)
 
     def test_print_classes(self):
-        for t in self.taxonomies.values():
-            if not t.has_entries():
-                continue
-            tax = list(t.values())[0]
-            print(tax)
-            pred = list(tax.values())[0]
-            print(pred)
+        for taxonomy in self.taxonomies.values():
+            print(taxonomy)
+            for predicate in taxonomy.values():
+                print(predicate)
+                for entry in predicate.values():
+                    print(entry)
 
     def test_amountEntries(self):
         list(self.taxonomies.values())[0].amount_entries()

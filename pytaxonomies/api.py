@@ -135,8 +135,10 @@ class Taxonomy(collections.Mapping):
         return to_return
 
     def has_entries(self):
-        if self.predicates.values() and list(self.predicates.values())[0].entries:
-            return True
+        if self.predicates.values():
+            for p in self.predicates.values():
+                if p.entries:
+                    return True
         return False
 
     def __str__(self):
