@@ -73,6 +73,7 @@ class Taxonomy(collections.Mapping):
         self.version = self.taxonomy['version']
         self.expanded = self.taxonomy.get('expanded')
         self.refs = self.taxonomy.get('refs')
+        self.type = self.taxonomy.get('type')
         self.__init_predicates()
 
     def __init_predicates(self):
@@ -123,15 +124,13 @@ class Taxonomy(collections.Mapping):
             to_return['expanded'] = self.expanded
         if self.refs:
             to_return['refs'] = self.refs
+        if self.type:
+            to_return['type'] = self.type
         p, v = self._json_predicates()
         if p:
             to_return['predicates'] = p
-        else:
-            to_return['predicates'] = None
         if v:
             to_return['values'] = v
-        else:
-            to_return['values'] = None
         return to_return
 
     def has_entries(self):
