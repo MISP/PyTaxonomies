@@ -1,0 +1,3 @@
+[submodule "pytaxonomies/data/misp-taxonomies"]
+	path = pytaxonomies/data/misp-taxonomies
+	url = https://github.com/MISP/misp-taxonomies.git

@@ -26,4 +26,6 @@ setup(
     tests_requires=['nose'],
     test_suite='nose.collector',
     install_requires=['requests'],
+    package_data={'pytaxonomies': ['data/misp-taxonomies/schema.json', 'data/misp-taxonomies/MANIFEST.json',
+                                   'data/misp-taxonomies/*/machinetag.json']}
 )

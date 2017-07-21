@@ -188,7 +188,7 @@ class Taxonomy(collections.Mapping):
 class Taxonomies(collections.Mapping):
 
     def __init__(self, manifest_url='https://raw.githubusercontent.com/MISP/misp-taxonomies/master/MANIFEST.json',
-                 manifest_path=None):
+                 manifest_path=os.path.join(os.path.abspath(os.path.dirname(__file__)), 'data', 'misp-taxonomies', 'MANIFEST.json')):
         if manifest_path:
             self.loader = self.__load_path
             self.manifest = self.loader(manifest_path)
