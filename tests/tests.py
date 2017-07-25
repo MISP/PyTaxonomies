@@ -5,7 +5,6 @@ import json
 import unittest
 from pytaxonomies import Taxonomies, EncodeTaxonomies
 import pytaxonomies.api
-import os
 
 
 class TestPyTaxonomies(unittest.TestCase):
@@ -78,7 +77,7 @@ class TestPyTaxonomies(unittest.TestCase):
         self.maxDiff = None
         for key, t in self.taxonomies_offline.items():
             out = t._json()
-            self.assertCountEqual(out, self.loaded_tax[t.name])
+            self.assertDictEqual(out, self.loaded_tax[t.name])
 
 
 if __name__ == "__main__":

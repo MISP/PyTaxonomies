@@ -5,6 +5,7 @@ import json
 import os
 import collections
 import re
+import sys
 from json import JSONEncoder
 
 try:
@@ -107,7 +108,7 @@ class Taxonomy(collections.Mapping):
                     temp_entry = {'value': entry.value}
                     if entry.expanded:
                         temp_entry['expanded'] = entry.expanded
-                    if entry.numerical_value:
+                    if entry.numerical_value is not None:
                         temp_entry['numerical_value'] = entry.numerical_value
                     if entry.colour:
                         temp_entry['colour'] = entry.colour
@@ -188,7 +189,8 @@ class Taxonomy(collections.Mapping):
 class Taxonomies(collections.Mapping):
 
     def __init__(self, manifest_url='https://raw.githubusercontent.com/MISP/misp-taxonomies/master/MANIFEST.json',
-                 manifest_path=os.path.join(os.path.abspath(os.path.dirname(__file__)), 'data', 'misp-taxonomies', 'MANIFEST.json')):
+                 manifest_path=os.path.join(os.path.abspath(os.path.dirname(sys.modules['pytaxonomies'].__file__)),
+                                            'data', 'misp-taxonomies', 'MANIFEST.json')):
         if manifest_path:
             self.loader = self.__load_path
             self.manifest = self.loader(manifest_path)
