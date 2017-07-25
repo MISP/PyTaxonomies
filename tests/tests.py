@@ -79,6 +79,8 @@ class TestPyTaxonomies(unittest.TestCase):
             out = t._json()
             self.assertDictEqual(out, self.loaded_tax[t.name])
 
+    def test_validate_schema(self):
+        self.taxonomies_offline.validate_with_schema()
 
 if __name__ == "__main__":
     unittest.main()

@@ -8,8 +8,7 @@ python:
     - "nightly"
 
 install:
-    - pip install coveralls
-    - pip install codecov
+    - pip install coveralls codecov jsonschema
     - pip install -r website/REQUIREMENTS.txt
     - pip install .
 

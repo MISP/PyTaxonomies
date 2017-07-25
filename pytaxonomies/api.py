@@ -14,6 +14,12 @@ try:
 except ImportError:
     HAS_REQUESTS = False
 
+try:
+    import jsonschema
+    HAS_JSONSCHEMA = True
+except ImportError:
+    HAS_JSONSCHEMA = False
+
 
 class EncodeTaxonomies(JSONEncoder):
     def default(self, obj):
@@ -206,6 +212,16 @@ class Taxonomies(collections.Mapping):
         self.license = self.manifest['license']
         self.description = self.manifest['description']
         self.__init_taxonomies()
+
+    def validate_with_schema(self):
+        if not HAS_JSONSCHEMA:
+            raise ImportError('jsonschema is required: pip install jsonschema')
+        schema = os.path.join(os.path.abspath(os.path.dirname(sys.modules['pytaxonomies'].__file__)),
+                                              'data', 'misp-taxonomies', 'schema.json')
+        with open(schema, 'r') as f:
+            loaded_schema = json.load(f)
+        for t in self.taxonomies.values():
+            jsonschema.validate(t.taxonomy, loaded_schema)
 
     def __load_path(self, path):
         with open(path, 'r') as f:
