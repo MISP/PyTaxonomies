@@ -68,7 +68,7 @@ class Predicate(collections.Mapping):
         return iter(self.entries)
 
     def __len__(self):
-        return len(self.entries.keys())
+        return len(self.entries)
 
 
 class Taxonomy(collections.Mapping):
@@ -98,7 +98,7 @@ class Taxonomy(collections.Mapping):
     def _json_predicates(self):
         predicates_to_return = []
         values_to_return = []
-        for predicate in self.predicates.values():
+        for predicate in self.values():
             temp_predicate = {'value': predicate.predicate}
             if predicate.expanded:
                 temp_predicate['expanded'] = predicate.expanded
@@ -141,8 +141,8 @@ class Taxonomy(collections.Mapping):
         return to_return
 
     def has_entries(self):
-        if self.predicates.values():
-            for p in self.predicates.values():
+        if self.values():
+            for p in self.values():
                 if p.entries:
                     return True
         return False
@@ -158,7 +158,7 @@ class Taxonomy(collections.Mapping):
 
     def machinetags(self):
         to_return = []
-        for p, content in self.predicates.items():
+        for p, content in self.items():
             if content:
                 for k in content.keys():
                     to_return.append('{}:{}="{}"'.format(self.name, p, k))
@@ -177,13 +177,13 @@ class Taxonomy(collections.Mapping):
 
     def amount_entries(self):
         if self.has_entries():
-            return sum([len(e) for e in self.predicates.values()])
+            return sum([len(e) for e in self.values()])
         else:
-            return len(self.predicates.keys())
+            return len(self.keys())
 
     def machinetags_expanded(self):
         to_return = []
-        for p, content in self.predicates.items():
+        for p, content in self.items():
             if content:
                 for k, entry in content.items():
                     to_return.append('{}:{}="{}"'.format(self.name, p, entry.expanded))
@@ -220,7 +220,7 @@ class Taxonomies(collections.Mapping):
                                               'data', 'misp-taxonomies', 'schema.json')
         with open(schema, 'r') as f:
             loaded_schema = json.load(f)
-        for t in self.taxonomies.values():
+        for t in self.values():
             jsonschema.validate(t.taxonomy, loaded_schema)
 
     def __load_path(self, path):
@@ -255,14 +255,14 @@ class Taxonomies(collections.Mapping):
 
     def __str__(self):
         to_print = ''
-        for taxonomy in self.taxonomies.values():
+        for taxonomy in self.values():
             to_print += "{}\n\n".format(str(taxonomy))
         return to_print
 
     def search(self, query, expanded=False):
         query = query.lower()
         to_return = []
-        for taxonomy in self.taxonomies.values():
+        for taxonomy in self.values():
             if expanded:
                 machinetags = taxonomy.machinetags_expanded()
             else:
@@ -287,5 +287,5 @@ class Taxonomies(collections.Mapping):
 
     def all_machinetags(self, expanded=False):
         if expanded:
-            return [taxonomy.machinetags_expanded() for taxonomy in self.taxonomies.values()]
-        return [taxonomy.machinetags() for taxonomy in self.taxonomies.values()]
+            return [taxonomy.machinetags_expanded() for taxonomy in self.values()]
+        return [taxonomy.machinetags() for taxonomy in self.values()]
