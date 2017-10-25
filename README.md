@@ -10,6 +10,14 @@ Pythonic way to work with the taxonomies defined there: https://github.com/MISP/
 
 Taxonomies and predicates are represented as immutable Python dictionaries.
 
+# Installation
+```
+git clone https://github.com/MISP/PyTaxonomies
+cd PyTaxonomies
+git submodule init && git submodule update
+python setup.py install
+```
+
 ## Basics
 
 ```
