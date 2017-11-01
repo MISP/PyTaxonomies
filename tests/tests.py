@@ -76,7 +76,7 @@ class TestPyTaxonomies(unittest.TestCase):
     def test_recreate_dump(self):
         self.maxDiff = None
         for key, t in self.taxonomies_offline.items():
-            out = t._json()
+            out = t.to_dict()
             self.assertDictEqual(out, self.loaded_tax[t.name])
 
     def test_validate_schema(self):
