@@ -63,6 +63,7 @@ class Predicate(collections.Mapping):
         self.expanded = predicate.get('expanded')
         self.description = predicate.get('description')
         self.colour = predicate.get('colour')
+        self.exclusive = predicate.get('exclusive')
         self.__init_entries(entries)
 
     def __init_entries(self, entries):
@@ -79,10 +80,11 @@ class Predicate(collections.Mapping):
             to_return['description'] = self.description
         if self.colour:
             to_return['colour'] = self.colour
+        if self.exclusive:
+            to_return['exclusive'] = self.exclusive
         if self.entries:
             to_return['entries'] = self.values()
         return to_return
-
 
     def to_json(self):
         return json.dumps(self, cls=EncodeTaxonomies)
@@ -110,6 +112,7 @@ class Taxonomy(collections.Mapping):
         self.expanded = self.taxonomy.get('expanded')
         self.refs = self.taxonomy.get('refs')
         self.type = self.taxonomy.get('type')
+        self.exclusive = self.taxonomy.get('exclusive')
         self.__init_predicates()
 
     def __init_predicates(self):
@@ -135,13 +138,14 @@ class Taxonomy(collections.Mapping):
             to_return['refs'] = self.refs
         if self.type:
             to_return['type'] = self.type
+        if self.exclusive:
+            to_return['exclusive'] = self.exclusive
         predicates = [p.to_dict() for p in self.values()]
         entries = []
         for p in predicates:
             if p.get('entries') is None:
                 continue
-            entries.append({'predicate': p['value'],
-                       'entry': [e.to_dict() for e in p.pop('entries')]})
+            entries.append({'predicate': p['value'], 'entry': [e.to_dict() for e in p.pop('entries')]})
         to_return['predicates'] = predicates
         if entries:
             to_return['values'] = entries
@@ -223,8 +227,7 @@ class Taxonomies(collections.Mapping):
     def validate_with_schema(self):
         if not HAS_JSONSCHEMA:
             raise ImportError('jsonschema is required: pip install jsonschema')
-        schema = os.path.join(os.path.abspath(os.path.dirname(sys.modules['pytaxonomies'].__file__)),
-                                              'data', 'misp-taxonomies', 'schema.json')
+        schema = os.path.join(os.path.abspath(os.path.dirname(sys.modules['pytaxonomies'].__file__)), 'data', 'misp-taxonomies', 'schema.json')
         with open(schema, 'r') as f:
             loaded_schema = json.load(f)
         for t in self.values():
