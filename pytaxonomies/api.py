@@ -64,6 +64,7 @@ class Predicate(collections.Mapping):
         self.description = predicate.get('description')
         self.colour = predicate.get('colour')
         self.exclusive = predicate.get('exclusive')
+        self.numerical_value = predicate.get('numerical_value')
         self.__init_entries(entries)
 
     def __init_entries(self, entries):
@@ -82,6 +83,8 @@ class Predicate(collections.Mapping):
             to_return['colour'] = self.colour
         if self.exclusive:
             to_return['exclusive'] = self.exclusive
+        if self.numerical_value is not None:
+            to_return['numerical_value'] = self.numerical_value
         if self.entries:
             to_return['entries'] = self.values()
         return to_return
