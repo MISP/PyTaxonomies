@@ -18,9 +18,10 @@ nav = Nav()
 def mynavbar():
     return Navbar(
         'MISP taxonomies viewer and editor',
-        View('Taxonomies', 'taxonomies'),
-        View('Search', 'search'),
+        View('Taxonomies', 'taxonomies', name=None),
+        View('Search', 'search')
     )
+
 
 app = Flask(__name__)
 app.secret_key = '<changeme>'
@@ -50,6 +51,7 @@ def taxonomies(name=None):
         return render_template('taxonomy.html', taxonomy=t.get(name))
     else:
         return render_template('taxonomies.html', all_taxonomies=t)
+
 
 @app.route('/search', methods=['GET', 'POST'])
 def search():
