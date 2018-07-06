@@ -3,3 +3,5 @@ dist
 pytaxonomies.egg-info
 *.swp
 *.pyc
+
+.ipynb_checkpoints

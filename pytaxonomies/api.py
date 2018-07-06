@@ -30,7 +30,14 @@ class EncodeTaxonomies(JSONEncoder):
 
 class Entry():
 
-    def __init__(self, entry):
+    def __init__(self, entry=None):
+        if not entry:
+            # We're creating a new one
+            self.expanded = None
+            self.colour = None
+            self.description = None
+            self.numerical_value = None
+            return
         self.value = entry['value']
         self.expanded = entry.get('expanded')
         self.colour = entry.get('colour')
@@ -58,7 +65,16 @@ class Entry():
 
 class Predicate(collections.Mapping):
 
-    def __init__(self, predicate, entries):
+    def __init__(self, predicate=None, entries=None):
+        if not predicate and not entries:
+            # We're creating a new one
+            self.expanded = None
+            self.description = None
+            self.colour = None
+            self.exclusive = None
+            self.numerical_value = None
+            self.entries = {}
+            return
         self.predicate = predicate['value']
         self.expanded = predicate.get('expanded')
         self.description = predicate.get('description')
@@ -107,7 +123,15 @@ class Predicate(collections.Mapping):
 
 class Taxonomy(collections.Mapping):
 
-    def __init__(self, taxonomy):
+    def __init__(self, taxonomy=None):
+        if not taxonomy:
+            # We're creating a new one
+            self.expanded = None
+            self.refs = None
+            self.type = None
+            self.exclusive = None
+            self.predicates = {}
+            return
         self.taxonomy = taxonomy
         self.name = self.taxonomy['namespace']
         self.description = self.taxonomy['description']
