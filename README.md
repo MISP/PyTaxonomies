@@ -12,14 +12,14 @@ Taxonomies and predicates are represented as immutable Python dictionaries.
 
 # Installation
 ```
-pip install git+https://github.com/MISP/PyTaxonomies
+pip3 install git+https://github.com/MISP/PyTaxonomies
 ```
 or
 ```
 git clone https://github.com/MISP/PyTaxonomies
 cd PyTaxonomies
 git submodule init && git submodule update
-python setup.py install
+python3 setup.py install
 ```
 
 ## Basics
