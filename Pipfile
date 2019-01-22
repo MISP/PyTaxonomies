@@ -10,6 +10,10 @@ jsonschema = "*"
 
 [packages]
 pytaxonomies = {editable = true,path = "."}
+flask-nav = "*"
+Flask = "*"
+Flask-Bootstrap = "*"
+Flask-WTF = "*"
 
 [requires]
 python_version = "3.6"

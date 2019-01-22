@@ -9,7 +9,6 @@ python:
 
 install:
     - pip install pipenv
-    - pip install -r website/REQUIREMENTS.txt
     - pipenv install -d
 
 script:
