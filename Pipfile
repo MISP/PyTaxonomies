@@ -7,6 +7,7 @@ verify_ssl = true
 coveralls = "*"
 codecov = "*"
 jsonschema = "*"
+nose = "*"
 
 [packages]
 pytaxonomies = {editable = true,path = "."}
