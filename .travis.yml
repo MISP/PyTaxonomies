@@ -5,6 +5,8 @@ cache: pip
 python:
     - "3.6"
     - "3.6-dev"
+    - "3.7"
+    - "3.7-dev"
     - "nightly"
 
 install:
@@ -12,7 +14,7 @@ install:
     - pipenv install -d
 
 script:
-    - pipenv run nosetests --with-coverage --cover-package=pytaxonomies -d
+    - pipenv run nosetests-3.4 --with-coverage --cover-package=pytaxonomies -d
 
 after_success:
     - pipenv run codecov
