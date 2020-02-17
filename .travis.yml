@@ -7,15 +7,17 @@ python:
     - "3.6-dev"
     - "3.7"
     - "3.7-dev"
-    - "nightly"
+    - "3.8"
+    - "3.8-dev"
 
 install:
-    - pip install pipenv
-    - pipenv install -d
+    - pip install poetry
+    - poetry install -E webui -E remote
 
 script:
-    - pipenv run nosetests-3.4 --with-coverage --cover-package=pytaxonomies -d
+    - poetry run nosetests-3.4 --with-coverage --cover-package=pytaxonomies -d
+    - poetry run mypy --no-strict-optional pytaxonomies
 
 after_success:
-    - pipenv run codecov
-    - pipenv run coveralls
+    - poetry run codecov
+    - poetry run coveralls

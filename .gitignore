@@ -5,3 +5,6 @@ pytaxonomies.egg-info
 *.pyc
 
 .ipynb_checkpoints
+
+.coverage
+.mypy_cache

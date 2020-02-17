@@ -10,6 +10,7 @@ import pytaxonomies.api
 class TestPyTaxonomies(unittest.TestCase):
 
     def setUp(self):
+        self.maxDiff = None
         self.taxonomies_offline = Taxonomies()
         self.loaded_tax = {}
         for t in self.taxonomies_offline.manifest['taxonomies']:

@@ -2,12 +2,12 @@
 # -*- coding: utf-8 -*-
 
 from flask import Flask, request, render_template
-from flask_bootstrap import Bootstrap
-from flask_nav import Nav
-from flask_nav.elements import Navbar, View
-from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField
-from wtforms.validators import DataRequired
+from flask_bootstrap import Bootstrap  # type: ignore
+from flask_nav import Nav  # type: ignore
+from flask_nav.elements import Navbar, View  # type: ignore
+from flask_wtf import FlaskForm  # type: ignore
+from wtforms import StringField, SubmitField  # type: ignore
+from wtforms.validators import DataRequired  # type: ignore
 from pytaxonomies import Taxonomies
 
 
@@ -30,7 +30,7 @@ app.config['BOOTSTRAP_SERVE_LOCAL'] = True
 app.debug = True
 nav.init_app(app)
 
-#t = Taxonomies(manifest_path="../../misp-taxonomies/MANIFEST.json")
+# t = Taxonomies(manifest_path="../../misp-taxonomies/MANIFEST.json")
 t = Taxonomies()
 
 
