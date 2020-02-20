@@ -3,7 +3,7 @@
 
 import json
 import os
-import collections
+from collections.abc import Mapping
 import re
 import sys
 from json import JSONEncoder
@@ -65,7 +65,7 @@ class Entry():
         return self.value
 
 
-class Predicate(collections.Mapping):
+class Predicate(Mapping):
 
     def __init__(self, predicate: Optional[Dict[str, str]]=None,
                  entries: Optional[List[Dict[str, str]]]=None):
@@ -124,7 +124,7 @@ class Predicate(collections.Mapping):
         return len(self.entries)
 
 
-class Taxonomy(collections.Mapping):
+class Taxonomy(Mapping):
 
     def __init__(self, taxonomy=None):
         if not taxonomy:
@@ -233,7 +233,7 @@ class Taxonomy(collections.Mapping):
         return to_return
 
 
-class Taxonomies(collections.Mapping):
+class Taxonomies(Mapping):
 
     def __init__(self, manifest_url: str='https://raw.githubusercontent.com/MISP/misp-taxonomies/master/MANIFEST.json',
                  manifest_path: Union[Path, str]=Path(os.path.abspath(os.path.dirname(sys.modules['pytaxonomies'].__file__))) / 'data' / 'misp-taxonomies' / 'MANIFEST.json'):
