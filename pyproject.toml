@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pytaxonomies"
-version = "0.9"
+version = "1.0"
 description = "Python API for the taxonomies."
 authors = ["Raphaël Vinot <raphael.vinot@circl.lu>"]
 license = "BSD-3-Clause"
@@ -22,6 +22,11 @@ classifiers=[
 include = ["pytaxonomies/data/misp-taxonomies/schema.json",
            "pytaxonomies/data/misp-taxonomies/MANIFEST.json",
 		   "pytaxonomies/data/misp-taxonomies/*/machinetag.json"]
+
+packages = [
+ { include = "pytaxonomies" },
+ { include = "pytaxonomies", from="bin" }
+]
 
 [tool.poetry.dependencies]
 python = "^3.6"
