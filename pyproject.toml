@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "pytaxonomies"
-version = "0.8"
+version = "0.9"
 description = "Python API for the taxonomies."
 authors = ["Raphaël Vinot <raphael.vinot@circl.lu>"]
 license = "BSD-3-Clause"
