@@ -235,7 +235,7 @@ class Taxonomy(Mapping):
 
 class Taxonomies(Mapping):
 
-    def __init__(self, manifest_url: str='https://raw.githubusercontent.com/MISP/misp-taxonomies/master/MANIFEST.json',
+    def __init__(self, manifest_url: str='https://raw.githubusercontent.com/MISP/misp-taxonomies/main/MANIFEST.json',
                  manifest_path: Union[Path, str]=Path(os.path.abspath(os.path.dirname(sys.modules['pytaxonomies'].__file__))) / 'data' / 'misp-taxonomies' / 'MANIFEST.json'):
         if manifest_path:
             self.loader: Callable[..., Dict[Any, Any]] = self.__load_path
