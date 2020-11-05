@@ -3,12 +3,11 @@
 
 import json
 import os
-from collections.abc import Mapping
+from collections import abc
 import re
 import sys
-from json import JSONEncoder
 from pathlib import Path
-from typing import Union, Dict, Optional, List, Callable, Any
+from typing import Union, Dict, Optional, List, Callable, Any, ValuesView, Iterator, Tuple
 
 try:
     import requests
@@ -23,11 +22,9 @@ except ImportError:
     HAS_JSONSCHEMA = False
 
 
-class EncodeTaxonomies(JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, (Taxonomy, Predicate, Entry)):
-            return obj.to_dict()
-        return JSONEncoder.default(self, obj)
+def taxonomies_json_default(obj: Union['Taxonomy', 'Predicate', 'Entry']) -> Dict[str, Any]:
+    if isinstance(obj, (Taxonomy, Predicate, Entry)):
+        return obj.to_dict()
 
 
 class Entry():
@@ -59,25 +56,28 @@ class Entry():
         return to_return
 
     def to_json(self) -> str:
-        return json.dumps(self, cls=EncodeTaxonomies)
+        return json.dumps(self, default=taxonomies_json_default)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.value
 
 
-class Predicate(Mapping):
+class Predicate(abc.Mapping):  # type: ignore
 
     def __init__(self, predicate: Optional[Dict[str, str]]=None,
                  entries: Optional[List[Dict[str, str]]]=None):
-        if not predicate and not entries:
-            # We're creating a new one
-            self.expanded = None
-            self.description = None
-            self.colour = None
-            self.exclusive = None
-            self.numerical_value = None
-            self.entries: Dict[str, Entry] = {}
-            return
+        if not predicate:
+            if entries:
+                raise Exception('Need predicates if entries.')
+            else:
+                # We're creating a new one
+                self.expanded = None
+                self.description = None
+                self.colour = None
+                self.exclusive = None
+                self.numerical_value = None
+                self.entries: Dict[str, Entry] = {}
+                return
         self.predicate = predicate['value']
         self.expanded = predicate.get('expanded')
         self.description = predicate.get('description')
@@ -86,14 +86,14 @@ class Predicate(Mapping):
         self.numerical_value = predicate.get('numerical_value')
         self.__init_entries(entries)
 
-    def __init_entries(self, entries: Optional[List[Dict[str, str]]]=None):
+    def __init_entries(self, entries: Optional[List[Dict[str, str]]]=None) -> None:
         self.entries = {}
         if entries:
             for e in entries:
                 self.entries[e['value']] = Entry(e)
 
-    def to_dict(self):
-        to_return = {'value': self.predicate}
+    def to_dict(self) -> Dict[str, Union[str, ValuesView[Entry]]]:
+        to_return: Dict[str, Union[str, ValuesView[Entry]]] = {'value': self.predicate}
         if self.expanded:
             to_return['expanded'] = self.expanded
         if self.description:
@@ -109,31 +109,31 @@ class Predicate(Mapping):
         return to_return
 
     def to_json(self) -> str:
-        return json.dumps(self, cls=EncodeTaxonomies)
+        return json.dumps(self, default=taxonomies_json_default)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.predicate
 
-    def __getitem__(self, entry):
+    def __getitem__(self, entry: str) -> Entry:
         return self.entries[entry]
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[Any]:
         return iter(self.entries)
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.entries)
 
 
-class Taxonomy(Mapping):
+class Taxonomy(abc.Mapping):  # type: ignore
 
-    def __init__(self, taxonomy=None):
+    def __init__(self, taxonomy: Optional[Dict[str, Union[str, List[Dict[str, Any]]]]]=None):
+        self.predicates: Dict[str, Predicate] = {}
         if not taxonomy:
             # We're creating a new one
             self.expanded = None
             self.refs = None
             self.type = None
             self.exclusive = None
-            self.predicates: Dict[str, Predicate] = {}
             return
         self.taxonomy = taxonomy
         self.name = self.taxonomy['namespace']
@@ -145,21 +145,22 @@ class Taxonomy(Mapping):
         self.exclusive = self.taxonomy.get('exclusive')
         self.__init_predicates()
 
-    def __init_predicates(self):
-        self.predicates = {}
-        entries = {}
-        if self.taxonomy.get('values'):
+    def __init_predicates(self) -> None:
+        entries: Dict[str, List[Dict[str, str]]] = {}
+        if self.taxonomy.get('values') and isinstance(self.taxonomy['values'], list):
             for v in self.taxonomy['values']:
                 if not entries.get(v['predicate']):
                     entries[v['predicate']] = []
                 entries[v['predicate']] += v['entry']
         for p in self.taxonomy['predicates']:
+            if isinstance(p, str):
+                continue
             self.predicates[p['value']] = Predicate(p, entries.get(p['value']))
 
-    def to_json(self):
-        return json.dumps(self, cls=EncodeTaxonomies)
+    def to_json(self) -> str:
+        return json.dumps(self, default=taxonomies_json_default)
 
-    def to_dict(self):
+    def to_dict(self) -> Dict[str, Union[str, List[Dict[str, Any]]]]:
         to_return = {'namespace': self.name, 'description': self.description,
                      'version': self.version}
         if self.expanded:
@@ -181,48 +182,48 @@ class Taxonomy(Mapping):
             to_return['values'] = entries
         return to_return
 
-    def has_entries(self):
+    def has_entries(self) -> bool:
         if self.values():
             for p in self.values():
                 if p.entries:
                     return True
         return False
 
-    def __str__(self):
+    def __str__(self) -> str:
         return '\n'.join(self.machinetags())
 
-    def make_machinetag(self, predicate, entry=None):
+    def make_machinetag(self, predicate: str, entry: Optional[Entry]=None) -> str:
         if entry:
-            return '{}:{}="{}"'.format(self.name, predicate, entry)
+            return f'{self.name}:{predicate}="{entry}"'
         else:
-            return '{}:{}'.format(self.name, predicate)
+            return f'{self.name}:{predicate}'
 
-    def machinetags(self):
+    def machinetags(self) -> List[str]:
         to_return = []
         for p, content in self.items():
             if content:
                 for k in content.keys():
-                    to_return.append('{}:{}="{}"'.format(self.name, p, k))
+                    to_return.append(f'{self.name}:{p}="{k}"')
             else:
-                to_return.append('{}:{}'.format(self.name, p))
+                to_return.append(f'{self.name}:{p}')
         return to_return
 
-    def __getitem__(self, predicate):
+    def __getitem__(self, predicate: str) -> Predicate:
         return self.predicates[predicate]
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[Any]:
         return iter(self.predicates)
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.predicates)
 
-    def amount_entries(self):
+    def amount_entries(self) -> int:
         if self.has_entries():
             return sum([len(e) for e in self.values()])
         else:
             return len(self.keys())
 
-    def machinetags_expanded(self):
+    def machinetags_expanded(self) -> List[str]:
         to_return = []
         for p, content in self.items():
             if content:
@@ -233,7 +234,7 @@ class Taxonomy(Mapping):
         return to_return
 
 
-class Taxonomies(Mapping):
+class Taxonomies(abc.Mapping):  # type: ignore
 
     def __init__(self, manifest_url: str='https://raw.githubusercontent.com/MISP/misp-taxonomies/main/MANIFEST.json',
                  manifest_path: Union[Path, str]=Path(os.path.abspath(os.path.dirname(sys.modules['pytaxonomies'].__file__))) / 'data' / 'misp-taxonomies' / 'MANIFEST.json'):
@@ -253,7 +254,7 @@ class Taxonomies(Mapping):
         self.description = self.manifest['description']
         self.__init_taxonomies()
 
-    def validate_with_schema(self):
+    def validate_with_schema(self) -> None:
         if not HAS_JSONSCHEMA:
             raise ImportError('jsonschema is required: pip install jsonschema')
         schema = os.path.join(os.path.abspath(os.path.dirname(sys.modules['pytaxonomies'].__file__)), 'data', 'misp-taxonomies', 'schema.json')
@@ -262,21 +263,21 @@ class Taxonomies(Mapping):
         for t in self.values():
             jsonschema.validate(t.taxonomy, loaded_schema)
 
-    def __load_path(self, path: Union[Path, str]) -> Dict:
+    def __load_path(self, path: Union[Path, str]) -> Dict[str, Any]:
         if isinstance(path, str):
             path = Path(path)
         with path.open('r') as f:
             return json.load(f)
 
-    def __load_url(self, url: str) -> Dict:
+    def __load_url(self, url: str) -> Dict[str, Any]:
         if not HAS_REQUESTS:
             raise Exception("Python module 'requests' isn't installed, unable to fetch the taxonomies.")
         return requests.get(url).json()
 
-    def __make_uri(self, taxonomy_name) -> str:
+    def __make_uri(self, taxonomy_name: str) -> str:
         return f'{self.url}/{taxonomy_name}/{self.manifest["path"]}'
 
-    def __init_taxonomies(self):
+    def __init_taxonomies(self) -> None:
         self.taxonomies = {}
         for t in self.manifest['taxonomies']:
             uri = self.__make_uri(t['name'])
@@ -285,22 +286,22 @@ class Taxonomies(Mapping):
             if t['name'] != self.taxonomies[t['name']].name:
                 raise Exception("The name of the taxonomy in the manifest ({}) doesn't match with the name in the taxonomy ({})".format(t['name'], self.taxonomies[t['name']].name))
 
-    def __getitem__(self, name: str):
+    def __getitem__(self, name: str) -> Taxonomy:
         return self.taxonomies[name]
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[Any]:
         return iter(self.taxonomies)
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.taxonomies)
 
-    def __str__(self):
+    def __str__(self) -> str:
         to_print = ''
         for taxonomy in self.values():
             to_print += "{}\n\n".format(str(taxonomy))
         return to_print
 
-    def search(self, query: str, expanded: bool=False) -> List:
+    def search(self, query: str, expanded: bool=False) -> List[str]:
         query = query.lower()
         to_return = []
         for taxonomy in self.values():
@@ -315,7 +316,7 @@ class Taxonomies(Mapping):
                         to_return.append(mt)
         return to_return
 
-    def revert_machinetag(self, machinetag: str):
+    def revert_machinetag(self, machinetag: str) -> Union[Tuple[Taxonomy, Predicate, Entry], Tuple[Taxonomy, Predicate]]:
         if '=' in machinetag:
             name, predicat, entry = re.findall('^([^:]*):([^=]*)="([^"]*)"$', machinetag)[0]
         else:
@@ -326,7 +327,7 @@ class Taxonomies(Mapping):
         else:
             return self.taxonomies[name], self.taxonomies[name][predicat]
 
-    def all_machinetags(self, expanded: bool=False):
+    def all_machinetags(self, expanded: bool=False) -> List[str]:
         if expanded:
             return [taxonomy.machinetags_expanded() for taxonomy in self.values()]
         return [taxonomy.machinetags() for taxonomy in self.values()]

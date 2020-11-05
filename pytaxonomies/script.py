@@ -5,7 +5,7 @@ import argparse
 from pytaxonomies import Taxonomies
 
 
-def main():
+def main() -> None:
     argParser = argparse.ArgumentParser(description='Use MISP taxonomies')
     argParser.add_argument('-a', '--all', action='store_true', help='Print all taxonomies as machine tags')
     argParser.add_argument('-l', '--local', default=None, help='Use local manifest file.')

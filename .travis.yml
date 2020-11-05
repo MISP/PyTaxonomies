@@ -9,6 +9,8 @@ python:
     - "3.7-dev"
     - "3.8"
     - "3.8-dev"
+    - "3.9"
+    - "3.9-dev"
 
 install:
     - pip install poetry
@@ -16,7 +18,7 @@ install:
 
 script:
     - poetry run nosetests-3.4 --with-coverage --cover-package=pytaxonomies -d
-    - poetry run mypy --no-strict-optional pytaxonomies
+    - poetry run mypy pytaxonomies
 
 after_success:
     - poetry run codecov

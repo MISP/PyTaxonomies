@@ -3,7 +3,7 @@
 
 import json
 import unittest
-from pytaxonomies import Taxonomies, EncodeTaxonomies
+from pytaxonomies import Taxonomies
 import pytaxonomies.api
 
 
@@ -22,7 +22,6 @@ class TestPyTaxonomies(unittest.TestCase):
         for t_online, t_offline in zip(taxonomies_online.values(), self.taxonomies_offline.values()):
             self.assertEqual(str(t_online), str(t_offline))
         self.assertEqual(str(taxonomies_online), str(self.taxonomies_offline))
-
 
     def test_expanded_machinetags(self):
         self.taxonomies_offline.all_machinetags(expanded=True)
@@ -75,7 +74,7 @@ class TestPyTaxonomies(unittest.TestCase):
 
     def test_json(self):
         for key, t in self.taxonomies_offline.items():
-            json.dumps(t, cls=EncodeTaxonomies)
+            t.to_json()
 
     def test_recreate_dump(self):
         self.maxDiff = None
