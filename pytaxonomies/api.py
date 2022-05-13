@@ -100,7 +100,7 @@ class Predicate(abc.Mapping):  # type: ignore
             to_return['description'] = self.description
         if self.colour:
             to_return['colour'] = self.colour
-        if self.exclusive:
+        if self.exclusive is not None:
             to_return['exclusive'] = self.exclusive
         if self.numerical_value is not None:
             to_return['numerical_value'] = self.numerical_value
@@ -169,7 +169,7 @@ class Taxonomy(abc.Mapping):  # type: ignore
             to_return['refs'] = self.refs
         if self.type:
             to_return['type'] = self.type
-        if self.exclusive:
+        if self.exclusive is not None:
             to_return['exclusive'] = self.exclusive
         predicates = [p.to_dict() for p in self.values()]
         entries = []
@@ -236,14 +236,25 @@ class Taxonomy(abc.Mapping):  # type: ignore
 
 class Taxonomies(abc.Mapping):  # type: ignore
 
-    def __init__(self, manifest_url: str='https://raw.githubusercontent.com/MISP/misp-taxonomies/main/MANIFEST.json',
-                 manifest_path: Union[Path, str]=Path(os.path.abspath(os.path.dirname(sys.modules['pytaxonomies'].__file__))) / 'data' / 'misp-taxonomies' / 'MANIFEST.json'):
-        if manifest_path:
-            self.loader: Callable[..., Dict[Any, Any]] = self.__load_path
-            self.manifest = self.loader(manifest_path)
-        else:
+    def __init__(self, manifest_url: Optional[str]=None,
+                 manifest_path: Optional[Union[Path, str]]=None):
+        self.loader: Callable[..., Dict[Any, Any]]
+        if not manifest_url and not manifest_path:
+            # try path:
+            if sys.modules['pytaxonomies'].__file__:
+                root_path = Path(os.path.abspath(os.path.dirname(sys.modules['pytaxonomies'].__file__))) / 'data' / 'misp-taxonomies' / 'MANIFEST.json'
+                if root_path.exists():
+                    manifest_path = root_path
+            if not manifest_path:
+                manifest_url = 'https://raw.githubusercontent.com/MISP/misp-taxonomies/main/MANIFEST.json'
+
+        if manifest_url:
             self.loader = self.__load_url
             self.manifest = self.loader(manifest_url)
+
+        elif manifest_path:
+            self.loader = self.__load_path
+            self.manifest = self.loader(manifest_path)
 
         if manifest_path:
             self.url = os.path.dirname(os.path.realpath(manifest_path))
@@ -257,11 +268,12 @@ class Taxonomies(abc.Mapping):  # type: ignore
     def validate_with_schema(self) -> None:
         if not HAS_JSONSCHEMA:
             raise ImportError('jsonschema is required: pip install jsonschema')
-        schema = os.path.join(os.path.abspath(os.path.dirname(sys.modules['pytaxonomies'].__file__)), 'data', 'misp-taxonomies', 'schema.json')
-        with open(schema, 'r') as f:
-            loaded_schema = json.load(f)
-        for t in self.values():
-            jsonschema.validate(t.taxonomy, loaded_schema)
+        if sys.modules['pytaxonomies'].__file__:
+            schema = os.path.join(os.path.abspath(os.path.dirname(sys.modules['pytaxonomies'].__file__)), 'data', 'misp-taxonomies', 'schema.json')
+            with open(schema, 'r') as f:
+                loaded_schema = json.load(f)
+            for t in self.values():
+                jsonschema.validate(t.taxonomy, loaded_schema)
 
     def __load_path(self, path: Union[Path, str]) -> Dict[str, Any]:
         if isinstance(path, str):

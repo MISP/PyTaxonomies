@@ -18,7 +18,7 @@ class TestPyTaxonomies(unittest.TestCase):
                 self.loaded_tax[t['name']] = json.load(f)
 
     def test_compareOnlineOffilne(self):
-        taxonomies_online = Taxonomies(manifest_path=None)
+        taxonomies_online = Taxonomies(manifest_url='https://raw.githubusercontent.com/MISP/misp-taxonomies/main/MANIFEST.json')
         for t_online, t_offline in zip(taxonomies_online.values(), self.taxonomies_offline.values()):
             self.assertEqual(str(t_online), str(t_offline))
         self.assertEqual(str(taxonomies_online), str(self.taxonomies_offline))
@@ -57,7 +57,7 @@ class TestPyTaxonomies(unittest.TestCase):
     def test_missingDependency(self):
         pytaxonomies.api.HAS_REQUESTS = False
         with self.assertRaises(Exception):
-            Taxonomies(manifest_path=None)
+            Taxonomies(manifest_url='foo')
         Taxonomies()
         pytaxonomies.api.HAS_REQUESTS = True
 
