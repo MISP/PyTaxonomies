@@ -270,7 +270,7 @@ class Taxonomies(abc.Mapping):  # type: ignore
             raise ImportError('jsonschema is required: pip install jsonschema')
         if sys.modules['pytaxonomies'].__file__:
             schema = os.path.join(os.path.abspath(os.path.dirname(sys.modules['pytaxonomies'].__file__)), 'data', 'misp-taxonomies', 'schema.json')
-            with open(schema, 'r') as f:
+            with open(schema, 'r', encoding="utf-8") as f:
                 loaded_schema = json.load(f)
             for t in self.values():
                 jsonschema.validate(t.taxonomy, loaded_schema)
@@ -278,7 +278,7 @@ class Taxonomies(abc.Mapping):  # type: ignore
     def __load_path(self, path: Union[Path, str]) -> Dict[str, Any]:
         if isinstance(path, str):
             path = Path(path)
-        with path.open('r') as f:
+        with path.open('r', encoding="utf-8") as f:
             return json.load(f)
 
     def __load_url(self, url: str) -> Dict[str, Any]:
