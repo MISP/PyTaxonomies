@@ -25,9 +25,9 @@ include = ["pytaxonomies/data/misp-taxonomies/schema.json",
 
 [tool.poetry.dependencies]
 python = "^3.8"
-requests = { version = "^2.31.0", optional = true }
+requests = { version = "^2.32.3", optional = true }
 flask-nav = {version = "^0.6", optional = true}
-Flask = {version = "^3.0.0", optional = true}
+Flask = {version = "^3.0.3", optional = true}
 Flask-Bootstrap = {version = "^3.3.7.1", optional = true}
 Flask-WTF = {version = "^1.2.1", optional = true}
 
@@ -36,10 +36,10 @@ webui = ["flask-nav", "Flask",  "Flask-Bootstrap", "Flask-WTF"]
 remote = ["requests"]
 
 [tool.poetry.dev-dependencies]
-jsonschema = "^4.20.0"
-mypy = "^1.8.0"
-types-requests = "^2.31.0.20240106"
-pytest-cov = "^4.1.0"
+jsonschema = "^4.22.0"
+mypy = "^1.10.0"
+types-requests = "^2.32.0.20240602"
+pytest-cov = "^5.0.0"
 
 [tool.poetry.scripts]
 pytaxonomies = 'pytaxonomies.script:main'
