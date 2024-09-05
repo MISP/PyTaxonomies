@@ -815,13 +815,13 @@ files = [
 
 [[package]]
 name = "types-requests"
-version = "2.32.0.20240622"
+version = "2.32.0.20240905"
 description = "Typing stubs for requests"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "types-requests-2.32.0.20240622.tar.gz", hash = "sha256:ed5e8a412fcc39159d6319385c009d642845f250c63902718f605cd90faade31"},
-    {file = "types_requests-2.32.0.20240622-py3-none-any.whl", hash = "sha256:97bac6b54b5bd4cf91d407e62f0932a74821bc2211f22116d9ee1dd643826caf"},
+    {file = "types-requests-2.32.0.20240905.tar.gz", hash = "sha256:e97fd015a5ed982c9ddcd14cc4afba9d111e0e06b797c8f776d14602735e9bd6"},
+    {file = "types_requests-2.32.0.20240905-py3-none-any.whl", hash = "sha256:f46ecb55f5e1a37a58be684cf3f013f166da27552732ef2469a0cc8e62a72881"},
 ]
 
 [package.dependencies]
@@ -921,4 +921,4 @@ webui = ["Flask", "Flask-Bootstrap", "Flask-WTF", "flask-nav"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "2b6e07a185b75df0a575abc323a07f6cd02cb71bd9dbaa484897d8f02a520e5f"
+content-hash = "052e194d445639683a61c3c3c4123dc84440aa11c10575ab3788a9a07f172d08"
