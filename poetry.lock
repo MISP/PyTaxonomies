@@ -1019,5 +1019,5 @@ webui = ["Flask", "Flask-Bootstrap", "Flask-WTF", "flask-nav"]
 
 [metadata]
 lock-version = "2.1"
-python-versions = "^3.9"
-content-hash = "f3110e890c3124685035d2d132a0a276352be87b774876d6f90f514fdf280974"
+python-versions = ">=3.9"
+content-hash = "9a7188e2fd711da32cb34b2cbebee7c64e5f297892f2ea9c4b8697a8557f4186"
