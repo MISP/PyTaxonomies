@@ -1,9 +1,5 @@
 # PyTaxonomies
 
-[![Build Status](https://travis-ci.org/MISP/PyTaxonomies.svg?branch=master)](https://travis-ci.org/MISP/PyTaxonomies)
-[![Coverage Status](https://coveralls.io/repos/github/MISP/PyTaxonomies/badge.svg?branch=master)](https://coveralls.io/github/MISP/PyTaxonomies?branch=master)
-[![codecov.io](https://codecov.io/github/MISP/PyTaxonomies/coverage.svg?branch=master)](https://codecov.io/github/MISP/PyTaxonomies?branch=master)
-
 Pythonic way to work with the taxonomies defined there: https://github.com/MISP/misp-taxonomies
 
 # Usage
@@ -11,15 +7,9 @@ Pythonic way to work with the taxonomies defined there: https://github.com/MISP/
 Taxonomies and predicates are represented as immutable Python dictionaries.
 
 # Installation
+
 ```
-pip3 install git+https://github.com/MISP/PyTaxonomies
-```
-or
-```
-git clone https://github.com/MISP/PyTaxonomies
-cd PyTaxonomies
-git submodule init && git submodule update
-python3 setup.py install
+pip install pytaxonomies
 ```
 
 ## Basics
