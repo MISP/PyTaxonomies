@@ -1,49 +1,45 @@
-[tool.poetry]
+[project]
 name = "pytaxonomies"
-version = "1.5.0"
+version = "2.0"
 description = "Python API for the taxonomies."
-authors = ["Raphaël Vinot <raphael.vinot@circl.lu>"]
+authors = [{name="Raphaël Vinot", email="raphael.vinot@circl.lu"}]
 license = "BSD-3-Clause"
 repository = "https://github.com/MISP/PyTaxonomies"
-
 readme = "README.md"
+requires-python = "^3.9"
 
+dynamic = ["classifiers"]
+
+[tool.poetry]
 classifiers=[
-    'License :: OSI Approved :: BSD License',
     'Development Status :: 5 - Production/Stable',
     'Environment :: Console',
     'Intended Audience :: Science/Research',
     'Intended Audience :: Telecommunications Industry',
-    'Programming Language :: Python',
     'Topic :: Security',
     'Topic :: Internet',
 ]
 
-include = ["pytaxonomies/data/misp-taxonomies/schema.json",
-           "pytaxonomies/data/misp-taxonomies/MANIFEST.json",
-		   "pytaxonomies/data/misp-taxonomies/*/machinetag.json"]
+exclude = ["pytaxonomies/data/misp-taxonomies"]
+include = [
+    { path = "pytaxonomies/data/misp-taxonomies/MANIFEST.json", format = ["sdist", "wheel"] },
+    { path = "pytaxonomies/data/misp-taxonomies/schema.json", format = ["sdist", "wheel"] },
+    { path = "pytaxonomies/data/misp-taxonomies/*/machinetag.json", format = ["sdist", "wheel"] }
+]
 
-[tool.poetry.dependencies]
-python = "^3.8"
-requests = { version = "^2.32.3", optional = true }
-flask-nav = {version = "^0.6", optional = true}
-Flask = {version = "^3.0.3", optional = true}
-Flask-Bootstrap = {version = "^3.3.7.1", optional = true}
-Flask-WTF = {version = "^1.2.1", optional = true}
-
-[tool.poetry.extras]
-webui = ["flask-nav", "Flask",  "Flask-Bootstrap", "Flask-WTF"]
-remote = ["requests"]
-
-[tool.poetry.dev-dependencies]
-jsonschema = "^4.22.0"
-mypy = "^1.10.1"
-types-requests = "^2.32.0.20240622"
-pytest-cov = "^5.0.0"
-
-[tool.poetry.scripts]
+[project.scripts]
 pytaxonomies = 'pytaxonomies.script:main'
 
+[project.optional-dependencies]
+webui = ["flask-nav (>=0.6)", "Flask (>=3.0.3)",  "Flask-Bootstrap (>=3.3.7.1)", "Flask-WTF (>=1.2.1)"]
+remote = ["requests (>=2.32.3)"]
+
+[tool.poetry.group.dev.dependencies]
+jsonschema = "^4.23.0"
+mypy = "^1.14.1"
+types-requests = "^2.32.0.20241016"
+pytest-cov = "^6.0.0"
+
 [build-system]
-requires = ["poetry_core>=1.0", "setuptools"]
+requires = ["poetry_core>=2.0"]
 build-backend = "poetry.core.masonry.api"
