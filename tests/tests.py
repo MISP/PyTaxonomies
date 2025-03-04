@@ -3,6 +3,8 @@
 
 import json
 import unittest
+import uuid
+
 from pytaxonomies import Taxonomies
 import pytaxonomies.api
 
@@ -84,6 +86,17 @@ class TestPyTaxonomies(unittest.TestCase):
 
     def test_validate_schema(self):
         self.taxonomies_offline.validate_with_schema()
+
+    def test_validate_uuid5(self):
+        for taxonomy in self.taxonomies_offline.values():
+            expected_namespace_uuid = uuid.uuid5(uuid.NAMESPACE_DNS, taxonomy.name)
+            self.assertEqual(taxonomy.uuid, str(expected_namespace_uuid))
+            for predicate in taxonomy.predicates.values():
+                expected_predicate_uuid = uuid.uuid5(uuid.NAMESPACE_DNS, f'{taxonomy.name}:{predicate.predicate}')
+                self.assertEqual(predicate.uuid, str(expected_predicate_uuid))
+                for entry in predicate.entries.values():
+                    expected_entry_uuid = uuid.uuid5(uuid.NAMESPACE_DNS, f'{taxonomy.name}:{predicate.predicate}="{entry.value}"')
+                    self.assertEqual(entry.uuid, str(expected_entry_uuid))
 
 
 if __name__ == "__main__":
