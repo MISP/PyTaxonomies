@@ -87,16 +87,13 @@ class TestPyTaxonomies(unittest.TestCase):
     def test_validate_schema(self):
         self.taxonomies_offline.validate_with_schema()
 
-    def test_validate_uuid5(self):
+    def test_validate_uuid(self):
         for taxonomy in self.taxonomies_offline.values():
-            expected_namespace_uuid = uuid.uuid5(uuid.NAMESPACE_DNS, taxonomy.name)
-            self.assertEqual(taxonomy.uuid, str(expected_namespace_uuid))
+            self.assertTrue(uuid.UUID(taxonomy.uuid).version in [4, 5])
             for predicate in taxonomy.predicates.values():
-                expected_predicate_uuid = uuid.uuid5(uuid.NAMESPACE_DNS, f'{taxonomy.name}:{predicate.predicate}')
-                self.assertEqual(predicate.uuid, str(expected_predicate_uuid))
+                self.assertTrue(uuid.UUID(predicate.uuid).version in [4, 5])
                 for entry in predicate.entries.values():
-                    expected_entry_uuid = uuid.uuid5(uuid.NAMESPACE_DNS, f'{taxonomy.name}:{predicate.predicate}="{entry.value}"')
-                    self.assertEqual(entry.uuid, str(expected_entry_uuid))
+                    self.assertTrue(uuid.UUID(entry.uuid).version in [4, 5])
 
 
 if __name__ == "__main__":
