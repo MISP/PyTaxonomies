@@ -38,13 +38,14 @@ class Entry():
             self.numerical_value = None
             return
         self.value = entry['value']
+        self.uuid = entry['uuid']
         self.expanded = entry.get('expanded')
         self.colour = entry.get('colour')
         self.description = entry.get('description')
         self.numerical_value = entry.get('numerical_value')
 
     def to_dict(self) -> Dict[str, str]:
-        to_return = {'value': self.value}
+        to_return = {'value': self.value, 'uuid': self.uuid}
         if self.expanded:
             to_return['expanded'] = self.expanded
         if self.colour:
@@ -79,6 +80,7 @@ class Predicate(abc.Mapping):  # type: ignore
                 self.entries: Dict[str, Entry] = {}
                 return
         self.predicate = predicate['value']
+        self.uuid = predicate['uuid']
         self.expanded = predicate.get('expanded')
         self.description = predicate.get('description')
         self.colour = predicate.get('colour')
@@ -93,7 +95,8 @@ class Predicate(abc.Mapping):  # type: ignore
                 self.entries[e['value']] = Entry(e)
 
     def to_dict(self) -> Dict[str, Union[str, ValuesView[Entry]]]:
-        to_return: Dict[str, Union[str, ValuesView[Entry]]] = {'value': self.predicate}
+        to_return: Dict[str, Union[str, ValuesView[Entry]]] = {'value': self.predicate,
+                                                               'uuid': self.uuid}
         if self.expanded:
             to_return['expanded'] = self.expanded
         if self.description:
@@ -137,6 +140,7 @@ class Taxonomy(abc.Mapping):  # type: ignore
             return
         self.taxonomy = taxonomy
         self.name = self.taxonomy['namespace']
+        self.uuid = self.taxonomy['uuid']
         self.description = self.taxonomy['description']
         self.version = self.taxonomy['version']
         self.expanded = self.taxonomy.get('expanded')
@@ -162,7 +166,7 @@ class Taxonomy(abc.Mapping):  # type: ignore
 
     def to_dict(self) -> Dict[str, Union[str, List[Dict[str, Any]]]]:
         to_return = {'namespace': self.name, 'description': self.description,
-                     'version': self.version}
+                     'version': self.version, 'uuid': self.uuid}
         if self.expanded:
             to_return['expanded'] = self.expanded
         if self.refs:
