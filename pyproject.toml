@@ -32,13 +32,13 @@ pytaxonomies = 'pytaxonomies.script:main'
 
 [project.optional-dependencies]
 webui = ["flask-nav (>=0.6)", "Flask (>=3.1.1)",  "Flask-Bootstrap (>=3.3.7.1)", "Flask-WTF (>=1.2.2)"]
-remote = ["requests (>=2.32.3)"]
+remote = ["requests (>=2.32.4)"]
 
 [tool.poetry.group.dev.dependencies]
-jsonschema = "^4.23.0"
-mypy = "^1.15.0"
-types-requests = "^2.32.0.20250328"
-pytest-cov = "^6.1.1"
+jsonschema = "^4.24.0"
+mypy = "^1.16.0"
+types-requests = "^2.32.4.20250611"
+pytest-cov = "^6.2.1"
 
 [build-system]
 requires = ["poetry_core>=2.0"]
