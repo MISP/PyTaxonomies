@@ -35,9 +35,9 @@ webui = ["flask-nav (>=0.6)", "Flask (>=3.1.1)",  "Flask-Bootstrap (>=3.3.7.1)",
 remote = ["requests (>=2.32.4)"]
 
 [tool.poetry.group.dev.dependencies]
-jsonschema = "^4.24.0"
-mypy = "^1.16.1"
-types-requests = "^2.32.4.20250611"
+jsonschema = "^4.25.0"
+mypy = "^1.17.1"
+types-requests = "^2.32.4.20250809"
 pytest-cov = "^6.2.1"
 
 [build-system]
