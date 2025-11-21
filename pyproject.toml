@@ -6,7 +6,7 @@ authors = [{name="Raphaël Vinot", email="raphael.vinot@circl.lu"}]
 license = "BSD-3-Clause"
 repository = "https://github.com/MISP/PyTaxonomies"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 
 dynamic = ["classifiers"]
 
@@ -31,14 +31,14 @@ include = [
 pytaxonomies = 'pytaxonomies.script:main'
 
 [project.optional-dependencies]
-webui = ["flask-nav (>=0.6)", "Flask (>=3.1.1)",  "Flask-Bootstrap (>=3.3.7.1)", "Flask-WTF (>=1.2.2)"]
-remote = ["requests (>=2.32.4)"]
+webui = ["flask-nav (>=0.6)", "Flask (>=3.1.2)",  "Flask-Bootstrap (>=3.3.7.1)", "Flask-WTF (>=1.2.2)"]
+remote = ["requests (>=2.32.5)"]
 
 [tool.poetry.group.dev.dependencies]
-jsonschema = "^4.25.0"
-mypy = "^1.17.1"
-types-requests = "^2.32.4.20250809"
-pytest-cov = "^6.2.1"
+jsonschema = "^4.25.1"
+mypy = "^1.18.2"
+types-requests = "^2.32.4.20250913"
+pytest-cov = "^7.0.0"
 
 [build-system]
 requires = ["poetry_core>=2.0"]
