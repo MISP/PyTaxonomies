@@ -89,11 +89,24 @@ class TestPyTaxonomies(unittest.TestCase):
 
     def test_validate_uuid(self):
         for taxonomy in self.taxonomies_offline.values():
-            self.assertTrue(uuid.UUID(taxonomy.uuid).version in [4, 5])
+            invalid_uuids = []
+            try:
+                self.assertTrue(uuid.UUID(taxonomy.uuid).version in [4, 5])
+            except ValueError:
+                invalid_uuids.append(('Taxonomy', taxonomy.uuid))
             for predicate in taxonomy.predicates.values():
-                self.assertTrue(uuid.UUID(predicate.uuid).version in [4, 5])
+                try:
+                    self.assertTrue(uuid.UUID(predicate.uuid).version in [4, 5])
+                except ValueError:
+                    invalid_uuids.append((f'Predicate "{predicate.predicate}"', predicate.uuid))
                 for entry in predicate.entries.values():
-                    self.assertTrue(uuid.UUID(entry.uuid).version in [4, 5])
+                    try:
+                        self.assertTrue(uuid.UUID(entry.uuid).version in [4, 5])
+                    except ValueError:
+                        invalid_uuids.append((f'Entry "{entry.value}"', entry.uuid))
+            if invalid_uuids:
+                print(invalid_uuids)
+                raise Exception(f'Invalid UUIDs in {taxonomy.name}')
 
 
 if __name__ == "__main__":
