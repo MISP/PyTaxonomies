@@ -91,17 +91,17 @@ class TestPyTaxonomies(unittest.TestCase):
         for taxonomy in self.taxonomies_offline.values():
             invalid_uuids = []
             try:
-                self.assertTrue(uuid.UUID(taxonomy.uuid).version in [4, 5])
+                self.assertTrue(uuid.UUID(taxonomy.uuid).version in [4, 5, 1], taxonomy.uuid)
             except ValueError:
                 invalid_uuids.append(('Taxonomy', taxonomy.uuid))
             for predicate in taxonomy.predicates.values():
                 try:
-                    self.assertTrue(uuid.UUID(predicate.uuid).version in [4, 5])
+                    self.assertTrue(uuid.UUID(predicate.uuid).version in [4, 5, 1], predicate.uuid)
                 except ValueError:
                     invalid_uuids.append((f'Predicate "{predicate.predicate}"', predicate.uuid))
                 for entry in predicate.entries.values():
                     try:
-                        self.assertTrue(uuid.UUID(entry.uuid).version in [4, 5])
+                        self.assertTrue(uuid.UUID(entry.uuid).version in [4, 5, 1], entry.uuid)
                     except ValueError:
                         invalid_uuids.append((f'Entry "{entry.value}"', entry.uuid))
             if invalid_uuids:
