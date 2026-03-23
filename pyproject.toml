@@ -38,7 +38,7 @@ remote = ["requests (>=2.32.5)"]
 jsonschema = "^4.26.0"
 mypy = "^1.19.1"
 types-requests = "^2.32.4.20260107"
-pytest-cov = "^7.0.0"
+pytest-cov = "^7.1.0"
 
 [build-system]
 requires = ["poetry_core>=2.0"]
