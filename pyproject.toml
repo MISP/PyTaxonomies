@@ -36,7 +36,7 @@ remote = ["requests (>=2.34.2)"]
 
 [tool.poetry.group.dev.dependencies]
 jsonschema = "^4.26.0"
-mypy = "^2.1.0"
+mypy = "^2.2.0"
 types-requests = "^2.33.0.20260518"
 pytest-cov = "^7.1.0"
 
