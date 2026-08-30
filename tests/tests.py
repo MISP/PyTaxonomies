@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 import json
+import os
 import unittest
 import uuid
 
@@ -19,10 +20,14 @@ class TestPyTaxonomies(unittest.TestCase):
             with open('{}/{}/{}'.format(self.taxonomies_offline.url, t['name'], 'machinetag.json'), 'r') as f:
                 self.loaded_tax[t['name']] = json.load(f)
 
+    @unittest.skipUnless(os.environ.get('PYTAXONOMIES_TEST_ONLINE'),
+                         'Set PYTAXONOMIES_TEST_ONLINE=1 to compare the pinned '
+                         'submodule against upstream main.')
     def test_compareOnlineOffilne(self):
         taxonomies_online = Taxonomies(manifest_url='https://raw.githubusercontent.com/MISP/misp-taxonomies/main/MANIFEST.json')
-        for t_online, t_offline in zip(taxonomies_online.values(), self.taxonomies_offline.values()):
-            self.assertEqual(str(t_online), str(t_offline))
+        self.assertEqual(sorted(taxonomies_online.keys()), sorted(self.taxonomies_offline.keys()))
+        for name, t_offline in self.taxonomies_offline.items():
+            self.assertEqual(str(taxonomies_online[name]), str(t_offline), name)
         self.assertEqual(str(taxonomies_online), str(self.taxonomies_offline))
 
     def test_expanded_machinetags(self):
