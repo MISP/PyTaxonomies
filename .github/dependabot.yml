@@ -15,3 +15,10 @@ updates:
     schedule:
       # Check for updates to GitHub Actions every weekday
       interval: "daily"
+
+  # Keep pytaxonomies/data/misp-taxonomies in step with upstream. Without this,
+  # the pin only moves when someone notices test_compareOnlineOffilne going red.
+  - package-ecosystem: "gitsubmodule"
+    directory: "/"
+    schedule:
+      interval: "daily"
