@@ -53,8 +53,8 @@ class TestPyTaxonomies(unittest.TestCase):
                     print(entry)
 
     def test_amountEntries(self):
-        for tax in self.taxonomies_offline.values():
-            tax.amount_entries()
+        for name, tax in self.taxonomies_offline.items():
+            self.assertEqual(tax.amount_entries(), len(tax.machinetags()), name)
 
     def test_missingDependency(self):
         pytaxonomies.api.HAS_REQUESTS = False

@@ -222,10 +222,9 @@ class Taxonomy(abc.Mapping):  # type: ignore
         return len(self.predicates)
 
     def amount_entries(self) -> int:
-        if self.has_entries():
-            return sum([len(e) for e in self.values()])
-        else:
-            return len(self.keys())
+        # Mirrors machinetags(): a predicate without entries still yields
+        # exactly one machine tag, so it counts for 1.
+        return sum(len(p) or 1 for p in self.values())
 
     def machinetags_expanded(self) -> List[str]:
         to_return = []
