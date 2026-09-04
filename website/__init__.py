@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+import os
+import secrets
+
 from flask import Flask, request, render_template
 from flask_bootstrap import Bootstrap  # type: ignore
 from flask_nav import Nav  # type: ignore
@@ -24,7 +27,11 @@ def mynavbar():
 
 
 app = Flask(__name__)
-app.secret_key = '<changeme>'
+# The secret key signs the session cookie and the Flask-WTF CSRF tokens, so it
+# must not be a value shipped in the source tree. Set PYTAXONOMIES_SECRET_KEY to
+# keep sessions valid across restarts; otherwise a random per-process key is
+# generated, which is safe for a single-process viewer.
+app.secret_key = os.environ.get('PYTAXONOMIES_SECRET_KEY') or secrets.token_hex(32)
 Bootstrap(app)
 app.config['BOOTSTRAP_SERVE_LOCAL'] = True
 app.debug = True
