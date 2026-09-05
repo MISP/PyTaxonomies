@@ -33,7 +33,7 @@ jobs:
 
     - name: Test with nosetests
       run: |
-        poetry run pytest tests/tests.py
+        poetry run pytest --cov=pytaxonomies --cov-report=xml tests/tests.py
         poetry run mypy pytaxonomies
 
     - name: Upload coverage to Codecov
