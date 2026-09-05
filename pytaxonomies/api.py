@@ -349,5 +349,5 @@ class Taxonomies(abc.Mapping):  # type: ignore
 
     def all_machinetags(self, expanded: bool=False) -> List[str]:
         if expanded:
-            return [taxonomy.machinetags_expanded() for taxonomy in self.values()]
-        return [taxonomy.machinetags() for taxonomy in self.values()]
+            return [mt for taxonomy in self.values() for mt in taxonomy.machinetags_expanded()]
+        return [mt for taxonomy in self.values() for mt in taxonomy.machinetags()]

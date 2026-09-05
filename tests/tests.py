@@ -31,6 +31,21 @@ class TestPyTaxonomies(unittest.TestCase):
     def test_machinetags(self):
         self.taxonomies_offline.all_machinetags()
 
+    def test_all_machinetags_is_flat(self):
+        all_machinetags = self.taxonomies_offline.all_machinetags()
+        for machinetag in all_machinetags:
+            self.assertIsInstance(machinetag, str)
+        self.assertEqual(len(all_machinetags),
+                         sum(len(t.machinetags()) for t in self.taxonomies_offline.values()))
+        self.assertIn('tlp:red', all_machinetags)
+
+    def test_all_machinetags_expanded_is_flat(self):
+        all_machinetags = self.taxonomies_offline.all_machinetags(expanded=True)
+        for machinetag in all_machinetags:
+            self.assertIsInstance(machinetag, str)
+        self.assertEqual(len(all_machinetags),
+                         sum(len(t.machinetags_expanded()) for t in self.taxonomies_offline.values()))
+
     def test_dict(self):
         len(self.taxonomies_offline)
         for n, t in self.taxonomies_offline.items():
