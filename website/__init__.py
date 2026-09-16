@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from flask import Flask, request, render_template
+from flask import Flask, abort, request, render_template
 from flask_bootstrap import Bootstrap  # type: ignore
 from flask_nav import Nav  # type: ignore
 from flask_nav.elements import Navbar, View  # type: ignore
@@ -47,10 +47,12 @@ def index():
 @app.route('/taxonomies/', defaults={'name': None})
 @app.route('/taxonomies/<name>', methods=['GET'])
 def taxonomies(name=None):
-    if name and t.get(name):
-        return render_template('taxonomy.html', taxonomy=t.get(name))
-    else:
-        return render_template('taxonomies.html', all_taxonomies=t)
+    if name:
+        taxonomy = t.get(name)
+        if taxonomy is None:
+            abort(404)
+        return render_template('taxonomy.html', taxonomy=taxonomy)
+    return render_template('taxonomies.html', all_taxonomies=t)
 
 
 @app.route('/search', methods=['GET', 'POST'])
