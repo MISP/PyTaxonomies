@@ -5,7 +5,7 @@ import json
 import unittest
 import uuid
 
-from pytaxonomies import Taxonomies
+from pytaxonomies import Taxonomies, Taxonomy, Predicate, Entry
 import pytaxonomies.api
 
 
@@ -83,6 +83,41 @@ class TestPyTaxonomies(unittest.TestCase):
         for key, t in self.taxonomies_offline.items():
             out = t.to_dict()
             self.assertDictEqual(out, self.loaded_tax[t.name])
+
+    def test_create_new_taxonomy(self):
+        """The flow documented in notebooks/create_n_edit.ipynb."""
+        new_taxonomy = Taxonomy()
+        new_taxonomy.name = "false-positive"
+        new_taxonomy.description = "Expected amount of false positives."
+        new_taxonomy.version = 1
+        new_taxonomy.expanded = "False positive"
+
+        risk = Predicate()
+        risk.predicate = 'risk'
+        risk.expanded = 'Risk'
+
+        low = Entry()
+        low.value = 'low'
+        low.expanded = 'Low'
+        low.numerical_value = 25
+
+        risk.entries = {'low': low}
+        new_taxonomy.predicates = {'risk': risk}
+
+        dumped = new_taxonomy.to_dict()
+        self.assertEqual(dumped['namespace'], 'false-positive')
+        self.assertEqual(uuid.UUID(dumped['uuid']).version, 4)
+        self.assertEqual(uuid.UUID(dumped['predicates'][0]['uuid']).version, 4)
+        entries = dumped['values'][0]['entry']
+        self.assertEqual([e['value'] for e in entries], ['low'])
+        self.assertEqual(uuid.UUID(entries[0]['uuid']).version, 4)
+        # and it survives a round trip through the loading path
+        self.assertEqual(str(Taxonomy(dumped)), 'false-positive:risk="low"')
+
+    def test_new_objects_get_distinct_uuids(self):
+        self.assertNotEqual(Entry().uuid, Entry().uuid)
+        self.assertNotEqual(Predicate().uuid, Predicate().uuid)
+        self.assertNotEqual(Taxonomy().uuid, Taxonomy().uuid)
 
     def test_validate_schema(self):
         self.taxonomies_offline.validate_with_schema()

@@ -3,6 +3,7 @@
 
 import json
 import os
+import uuid as uuid_module
 from collections import abc
 import re
 import sys
@@ -32,6 +33,8 @@ class Entry():
     def __init__(self, entry: Optional[Dict[str, str]]=None):
         if not entry:
             # We're creating a new one
+            self.value: Optional[str] = None
+            self.uuid: str = str(uuid_module.uuid4())
             self.expanded = None
             self.colour = None
             self.description = None
@@ -44,8 +47,10 @@ class Entry():
         self.description = entry.get('description')
         self.numerical_value = entry.get('numerical_value')
 
-    def to_dict(self) -> Dict[str, str]:
-        to_return = {'value': self.value, 'uuid': self.uuid}
+    def to_dict(self) -> Dict[str, Any]:
+        if self.value is None:
+            raise ValueError('An Entry requires a value before it can be serialized.')
+        to_return: Dict[str, Any] = {'value': self.value, 'uuid': self.uuid}
         if self.expanded:
             to_return['expanded'] = self.expanded
         if self.colour:
@@ -60,7 +65,7 @@ class Entry():
         return json.dumps(self, default=taxonomies_json_default)
 
     def __str__(self) -> str:
-        return self.value
+        return self.value if self.value is not None else ''
 
 
 class Predicate(abc.Mapping):  # type: ignore
@@ -72,6 +77,8 @@ class Predicate(abc.Mapping):  # type: ignore
                 raise Exception('Need predicates if entries.')
             else:
                 # We're creating a new one
+                self.predicate: Optional[str] = None
+                self.uuid: str = str(uuid_module.uuid4())
                 self.expanded = None
                 self.description = None
                 self.colour = None
@@ -95,6 +102,8 @@ class Predicate(abc.Mapping):  # type: ignore
                 self.entries[e['value']] = Entry(e)
 
     def to_dict(self) -> Dict[str, Union[str, ValuesView[Entry]]]:
+        if self.predicate is None:
+            raise ValueError('A Predicate requires a value before it can be serialized.')
         to_return: Dict[str, Union[str, ValuesView[Entry]]] = {'value': self.predicate,
                                                                'uuid': self.uuid}
         if self.expanded:
@@ -115,7 +124,7 @@ class Predicate(abc.Mapping):  # type: ignore
         return json.dumps(self, default=taxonomies_json_default)
 
     def __str__(self) -> str:
-        return self.predicate
+        return self.predicate if self.predicate is not None else ''
 
     def __getitem__(self, entry: str) -> Entry:
         return self.entries[entry]
@@ -129,10 +138,15 @@ class Predicate(abc.Mapping):  # type: ignore
 
 class Taxonomy(abc.Mapping):  # type: ignore
 
-    def __init__(self, taxonomy: Optional[Dict[str, Union[str, List[Dict[str, Any]]]]]=None):
+    def __init__(self, taxonomy: Optional[Dict[str, Any]]=None):
         self.predicates: Dict[str, Predicate] = {}
         if not taxonomy:
             # We're creating a new one
+            self.taxonomy: Dict[str, Any] = {}
+            self.name: Optional[str] = None
+            self.uuid: str = str(uuid_module.uuid4())
+            self.description: Optional[str] = None
+            self.version: Optional[Union[str, int]] = None
             self.expanded = None
             self.refs = None
             self.type = None
@@ -165,8 +179,11 @@ class Taxonomy(abc.Mapping):  # type: ignore
         return json.dumps(self, default=taxonomies_json_default)
 
     def to_dict(self) -> Dict[str, Union[str, List[Dict[str, Any]]]]:
-        to_return = {'namespace': self.name, 'description': self.description,
-                     'version': self.version, 'uuid': self.uuid}
+        for required in ('name', 'description', 'version'):
+            if getattr(self, required) is None:
+                raise ValueError(f'A Taxonomy requires a {required} before it can be serialized.')
+        to_return: Dict[str, Any] = {'namespace': self.name, 'description': self.description,
+                                     'version': self.version, 'uuid': self.uuid}
         if self.expanded:
             to_return['expanded'] = self.expanded
         if self.refs:
