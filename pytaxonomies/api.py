@@ -243,6 +243,9 @@ class Taxonomies(abc.Mapping):  # type: ignore
     def __init__(self, manifest_url: Optional[str]=None,
                  manifest_path: Optional[Union[Path, str]]=None):
         self.loader: Callable[..., Dict[Any, Any]]
+        if manifest_url and manifest_path:
+            raise ValueError('manifest_url and manifest_path are mutually exclusive, pass only one of them.')
+
         if not manifest_url and not manifest_path:
             # try path:
             if sys.modules['pytaxonomies'].__file__:
@@ -255,15 +258,12 @@ class Taxonomies(abc.Mapping):  # type: ignore
         if manifest_url:
             self.loader = self.__load_url
             self.manifest = self.loader(manifest_url)
+            self.url = self.manifest['url']
 
         elif manifest_path:
             self.loader = self.__load_path
             self.manifest = self.loader(manifest_path)
-
-        if manifest_path:
             self.url = os.path.dirname(os.path.realpath(manifest_path))
-        else:
-            self.url = self.manifest['url']
         self.version = self.manifest['version']
         self.license = self.manifest['license']
         self.description = self.manifest['description']
