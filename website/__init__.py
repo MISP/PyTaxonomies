@@ -27,7 +27,6 @@ app = Flask(__name__)
 app.secret_key = '<changeme>'
 Bootstrap(app)
 app.config['BOOTSTRAP_SERVE_LOCAL'] = True
-app.debug = True
 nav.init_app(app)
 
 # t = Taxonomies(manifest_path="../../misp-taxonomies/MANIFEST.json")
