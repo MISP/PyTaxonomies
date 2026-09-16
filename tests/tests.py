@@ -74,6 +74,11 @@ class TestPyTaxonomies(unittest.TestCase):
                     mt = tax.make_machinetag(p)
                     self.taxonomies_offline.revert_machinetag(mt)
 
+    def test_revert_machinetags_invalid(self):
+        for invalid in ['a:b="c', 'no-colon-here="x"', 'foo', '']:
+            with self.assertRaises(ValueError):
+                self.taxonomies_offline.revert_machinetag(invalid)
+
     def test_json(self):
         for key, t in self.taxonomies_offline.items():
             t.to_json()

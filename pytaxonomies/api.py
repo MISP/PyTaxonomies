@@ -337,10 +337,17 @@ class Taxonomies(abc.Mapping):  # type: ignore
         return to_return
 
     def revert_machinetag(self, machinetag: str) -> Union[Tuple[Taxonomy, Predicate, Entry], Tuple[Taxonomy, Predicate]]:
+        entry: Optional[str]
         if '=' in machinetag:
-            name, predicat, entry = re.findall('^([^:]*):([^=]*)="([^"]*)"$', machinetag)[0]
+            match = re.match('^([^:]*):([^=]*)="([^"]*)"$', machinetag)
+            if match is None:
+                raise ValueError(f'Invalid machinetag: {machinetag}')
+            name, predicat, entry = match.groups()
         else:
-            name, predicat = re.findall('^([^:]*):([^=]*)$', machinetag)[0]
+            match = re.match('^([^:]*):([^=]*)$', machinetag)
+            if match is None:
+                raise ValueError(f'Invalid machinetag: {machinetag}')
+            name, predicat = match.groups()
             entry = None
         if entry:
             return self.taxonomies[name], self.taxonomies[name][predicat], self.taxonomies[name][predicat][entry]

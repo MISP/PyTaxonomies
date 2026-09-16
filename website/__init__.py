@@ -59,8 +59,15 @@ def search():
     if form.validate_on_submit():
         q = request.form.get('query')
         entries = t.search(q)
-        if entries:
-            to_display = {e: t.revert_machinetag(e) for e in entries}
+        to_display = {}
+        for e in entries:
+            try:
+                to_display[e] = t.revert_machinetag(e)
+            except (ValueError, KeyError):
+                # Skip anything we cannot resolve back to a taxonomy entry
+                # instead of failing the whole search page.
+                continue
+        if to_display:
             return render_template('search.html', form=form, entries=to_display)
         else:
             return render_template('search.html', form=form, entries=None)
