@@ -7,7 +7,7 @@ from collections import abc
 import re
 import sys
 from pathlib import Path
-from typing import Union, Dict, Optional, List, Callable, Any, ValuesView, Iterator, Tuple
+from typing import Union, Dict, Optional, List, Callable, Any, Iterator, Tuple
 
 try:
     import requests
@@ -22,9 +22,10 @@ except ImportError:
     HAS_JSONSCHEMA = False
 
 
-def taxonomies_json_default(obj: Union['Taxonomy', 'Predicate', 'Entry']) -> Dict[str, Any]:
+def taxonomies_json_default(obj: Any) -> Dict[str, Any]:
     if isinstance(obj, (Taxonomy, Predicate, Entry)):
         return obj.to_dict()
+    raise TypeError(f'Object of type {type(obj).__name__} is not JSON serializable')
 
 
 class Entry():
@@ -94,9 +95,9 @@ class Predicate(abc.Mapping):  # type: ignore
             for e in entries:
                 self.entries[e['value']] = Entry(e)
 
-    def to_dict(self) -> Dict[str, Union[str, ValuesView[Entry]]]:
-        to_return: Dict[str, Union[str, ValuesView[Entry]]] = {'value': self.predicate,
-                                                               'uuid': self.uuid}
+    def to_dict(self) -> Dict[str, Union[str, List[Entry]]]:
+        to_return: Dict[str, Union[str, List[Entry]]] = {'value': self.predicate,
+                                                         'uuid': self.uuid}
         if self.expanded:
             to_return['expanded'] = self.expanded
         if self.description:
@@ -108,7 +109,7 @@ class Predicate(abc.Mapping):  # type: ignore
         if self.numerical_value is not None:
             to_return['numerical_value'] = self.numerical_value
         if self.entries:
-            to_return['entries'] = self.values()
+            to_return['entries'] = list(self.values())
         return to_return
 
     def to_json(self) -> str:

@@ -78,6 +78,22 @@ class TestPyTaxonomies(unittest.TestCase):
         for key, t in self.taxonomies_offline.items():
             t.to_json()
 
+    def test_predicate_to_json_keeps_entries(self):
+        for taxonomy in self.taxonomies_offline.values():
+            for predicate in taxonomy.values():
+                dumped = json.loads(predicate.to_json())
+                if predicate.entries:
+                    self.assertEqual(len(dumped['entries']), len(predicate.entries),
+                                     f'{taxonomy.name}:{predicate}')
+                    self.assertEqual([e['value'] for e in dumped['entries']],
+                                     [e.value for e in predicate.values()])
+                else:
+                    self.assertNotIn('entries', dumped)
+
+    def test_json_default_rejects_unknown_types(self):
+        with self.assertRaises(TypeError):
+            pytaxonomies.api.taxonomies_json_default(object())
+
     def test_recreate_dump(self):
         self.maxDiff = None
         for key, t in self.taxonomies_offline.items():
