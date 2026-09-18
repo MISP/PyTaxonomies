@@ -41,6 +41,14 @@ class TestPyTaxonomies(unittest.TestCase):
     def test_search(self):
         self.taxonomies_offline.search('phish')
 
+    def test_search_no_duplicates(self):
+        # search() used to append a machine tag once per matching component, so a
+        # tag matching on both its namespace and its predicate came back twice.
+        for query in ('misp', 'phish', 'a'):
+            results = self.taxonomies_offline.search(query)
+            self.assertTrue(results, query)
+            self.assertEqual(len(results), len(set(results)), query)
+
     def test_search_expanded(self):
         self.taxonomies_offline.search('phish', expanded=True)
 

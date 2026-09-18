@@ -331,9 +331,10 @@ class Taxonomies(abc.Mapping):  # type: ignore
                 else:
                     parts = re.findall('^([^:]*):([^=]*)$', mt)
                 if parts:
-                    for e in [e.lower() for e in parts[0] if e]:
-                        if e.startswith(query) or e.endswith(query):
-                            to_return.append(mt)
+                    # append once per machine tag, not once per matching component
+                    if any(e.startswith(query) or e.endswith(query)
+                           for e in [e.lower() for e in parts[0] if e]):
+                        to_return.append(mt)
         return to_return
 
     def revert_machinetag(self, machinetag: str) -> Union[Tuple[Taxonomy, Predicate, Entry], Tuple[Taxonomy, Predicate]]:
